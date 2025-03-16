@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
 from src.db.main import init_db
+from src.auth.routes import users_router
 
 version = "v1"
 
@@ -32,3 +33,5 @@ app = FastAPI(
         "security": [{"BearerAuth": []}],
     },
 )
+
+app.include_router(users_router, prefix=f"/api/{version}/auth", tags=["Auth"])
