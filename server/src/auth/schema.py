@@ -22,7 +22,7 @@ class UserBaseModel(BaseModel):
         ..., min_length=2, max_length=50, example="Doe", description="User's last name."
     )
     sex: Sex = Field(
-        default=Sex.Male, example="Male", description="Biological sex of the user."
+        default=Sex.Unknown, example=Sex.Male, description="Biological sex of the user."
     )
     birth_date: datetime = Field(
         ..., example="1990-01-01T00:00:00", description="User's date of birth."
@@ -40,33 +40,6 @@ class UserCreateModel(UserBaseModel):
     password: str = Field(
         ..., min_length=8, example="StrongP@ssw0rd", description="User's password."
     )
-
-
-class UserUpdateModel(BaseModel):
-    """Schema for updating an existing User."""
-
-    first_name: str | None = Field(
-        None,
-        min_length=2,
-        max_length=50,
-        example="John",
-        description="Updated first name.",
-    )
-    last_name: str | None = Field(
-        None,
-        min_length=2,
-        max_length=50,
-        example="Doe",
-        description="Updated last name.",
-    )
-    sex: Sex | None = Field(None, example="Male", description="Updated biological sex.")
-    birth_date: datetime | None = Field(
-        None, example="1990-01-01T00:00:00", description="Updated birth date."
-    )
-
-    class Config:
-        alias_generator = to_camel
-        populate_by_name = True
 
 
 class UserResponseModel(UserBaseModel):
