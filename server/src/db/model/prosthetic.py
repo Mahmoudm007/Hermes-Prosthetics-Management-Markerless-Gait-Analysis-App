@@ -1,4 +1,4 @@
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
 from datetime import datetime
 from typing import Optional
 
@@ -16,6 +16,7 @@ from src.db.model.enum import (
     SocketFit,
     ProstheticStiffness,
 )
+from src.db.model.patient import Patient
 from src.utils import to_camel
 
 
@@ -149,6 +150,7 @@ class Prosthetic(SQLModel, table=True):
         foreign_key="patient.id",
         description="ID of the patient associated with this prosthetic.",
     )
+    patient: Patient = Relationship(back_populates="prosthetics")
 
     created_at: datetime = Field(
         default_factory=datetime.utcnow,

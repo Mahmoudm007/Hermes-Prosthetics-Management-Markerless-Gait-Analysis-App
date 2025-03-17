@@ -1,6 +1,6 @@
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
 from datetime import datetime, date
-from typing import Optional
+from typing import List, Optional
 
 from src.db.model.enum import Sex, LimbDominance
 from src.utils import to_camel
@@ -48,6 +48,19 @@ class Patient(SQLModel, table=True):
     limb_dominance: LimbDominance = Field(
         default=LimbDominance.Unknown,
         description="Patient's dominant limb (Left, Right, or Unknown).",
+    )
+
+    medical_conditions: List["PatientMedicalCondition"] = Relationship(
+        back_populates="patient",
+        sa_relationship_kwargs={"lazy": "selectin"},
+    )
+    injuries: List["PatientInjury"] = Relationship(
+        back_populates="patient",
+        sa_relationship_kwargs={"lazy": "selectin"},
+    )
+    prosthetics: List["Prosthetic"] = Relationship(
+        back_populates="patient",
+        sa_relationship_kwargs={"lazy": "selectin"},
     )
 
     created_at: datetime = Field(

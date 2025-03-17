@@ -3,6 +3,10 @@ from contextlib import asynccontextmanager
 
 from src.db.main import init_db
 from src.auth.routes import users_router
+from src.patients.routes import patients_router
+from src.injuries.routes import injuries_router
+from src.medical_conditions.routes import medical_conditions_router
+from src.prosthetics.routes import prosthetics_router
 
 version = "v1"
 
@@ -32,6 +36,21 @@ app = FastAPI(
         },
         "security": [{"BearerAuth": []}],
     },
+    swagger_ui_parameters={"persistAuthorization": True},
 )
 
 app.include_router(users_router, prefix=f"/api/{version}/auth", tags=["Auth"])
+app.include_router(
+    patients_router, prefix=f"/api/{version}/patients", tags=["Patients"]
+)
+app.include_router(
+    injuries_router, prefix=f"/api/{version}/injuries", tags=["Injuries"]
+)
+app.include_router(
+    medical_conditions_router,
+    prefix=f"/api/{version}/medical-conditions",
+    tags=["Medical Conditions"],
+)
+app.include_router(
+    prosthetics_router, prefix=f"/api/{version}/prosthetics", tags=["Prosthetics"]
+)

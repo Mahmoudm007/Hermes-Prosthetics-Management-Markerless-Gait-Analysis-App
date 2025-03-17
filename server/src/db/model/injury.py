@@ -1,8 +1,9 @@
-from sqlmodel import SQLModel, Field
+from sqlmodel import Relationship, SQLModel, Field
 from datetime import datetime
 from typing import Optional
 
 from src.db.model.enum import Side
+from src.db.model.patient import Patient
 from src.utils import to_camel
 
 
@@ -44,6 +45,7 @@ class PatientInjury(SQLModel, table=True):
     patient_id: int = Field(
         foreign_key="patient.id", description="Reference to the associated patient."
     )
+    patient: Patient = Relationship(back_populates="injuries")
 
     created_at: datetime = Field(
         default_factory=datetime.utcnow,
