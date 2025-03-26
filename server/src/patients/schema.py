@@ -15,7 +15,7 @@ from src.prosthetics.schema import (
     ProstheticResponseModel,
     ProstheticCreateModel,
 )
-from src.utils import make_optional, to_camel
+from src.utils import partial_model, to_camel
 
 
 class PatientBaseModel(BaseModel):
@@ -96,7 +96,8 @@ class PatientCreateModel(PatientBaseModel):
     )
 
 
-class PatientUpdateModel(make_optional(PatientBaseModel)):
+@partial_model
+class PatientUpdateModel(PatientBaseModel):
     """Schema for updating an existing patient record."""
 
     pass

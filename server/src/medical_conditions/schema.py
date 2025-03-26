@@ -3,7 +3,7 @@ from typing import Optional
 from datetime import date, datetime
 
 from src.db.model.enum import Severity, TreatmentStatus
-from src.utils import make_optional, to_camel
+from src.utils import partial_model, to_camel
 
 
 class PatientMedicalConditionBaseModel(BaseModel):
@@ -60,9 +60,8 @@ class PatientMedicalConditionCreateModel(PatientMedicalConditionBaseModel):
     patient_id: None = Field(None)
 
 
-class PatientMedicalConditionUpdateModel(
-    make_optional(PatientMedicalConditionCreateModel)
-):
+@partial_model
+class PatientMedicalConditionUpdateModel(PatientMedicalConditionCreateModel):
     """Schema for updating an existing patient medical condition."""
 
     pass

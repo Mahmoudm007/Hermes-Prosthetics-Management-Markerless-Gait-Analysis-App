@@ -1,5 +1,6 @@
+from sqlalchemy import Column, DateTime
 from sqlmodel import Field, Relationship, SQLModel
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 from src.db.model.enum import (
@@ -153,12 +154,16 @@ class Prosthetic(SQLModel, table=True):
     patient: Patient = Relationship(back_populates="prosthetics")
 
     created_at: datetime = Field(
-        default_factory=datetime.utcnow,
-        description="Timestamp indicating when the prosthetic record was created.",
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column=Column(DateTime(timezone=True)),
+        description="Timestamp when the record was created.",
     )
     updated_at: datetime = Field(
-        default_factory=datetime.utcnow,
-        description="Timestamp of the most recent update to the prosthetic record.",
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column=Column(
+            DateTime(timezone=True), onupdate=lambda: datetime.now(timezone.utc)
+        ),
+        description="Timestamp when the record was last updated.",
     )
 
     def __repr__(self) -> str:

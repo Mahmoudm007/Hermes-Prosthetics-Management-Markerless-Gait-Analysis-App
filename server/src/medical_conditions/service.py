@@ -41,6 +41,10 @@ class MedicalConditionsService:
         new_medical_condition = PatientMedicalCondition(
             **medical_condition_data.model_dump(),
         )
+        if medical_condition_data.diagnosis_date:
+            new_medical_condition.diagnosis_year = (
+                medical_condition_data.diagnosis_date.year
+            )
 
         session.add(new_medical_condition)
         await session.commit()
@@ -57,6 +61,11 @@ class MedicalConditionsService:
         update_data = medical_condition_data.model_dump(exclude_unset=True)
         for key, value in update_data.items():
             setattr(medical_condition, key, value)
+
+        if medical_condition_data.diagnosis_date:
+            medical_condition.diagnosis_year = (
+                medical_condition_data.diagnosis_date.year
+            )
 
         await session.commit()
         await session.refresh(medical_condition)

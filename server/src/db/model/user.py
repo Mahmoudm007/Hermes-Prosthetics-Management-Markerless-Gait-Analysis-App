@@ -1,5 +1,6 @@
+from sqlalchemy import Column, DateTime
 from sqlmodel import SQLModel, Field
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 from src.utils import to_camel
@@ -29,12 +30,16 @@ class User(SQLModel, table=True):
     birth_date: datetime = Field(description="User's date of birth.")
 
     created_at: datetime = Field(
-        default_factory=datetime.utcnow,
-        description="Timestamp when the user was created.",
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column=Column(DateTime(timezone=True)),
+        description="Timestamp when the record was created.",
     )
     updated_at: datetime = Field(
-        default_factory=datetime.utcnow,
-        description="Timestamp when the user was last updated.",
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column=Column(
+            DateTime(timezone=True), onupdate=lambda: datetime.now(timezone.utc)
+        ),
+        description="Timestamp when the record was last updated.",
     )
 
     def __repr__(self):

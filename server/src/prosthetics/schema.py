@@ -16,7 +16,7 @@ from src.db.model.enum import (
     SocketFit,
     ProstheticStiffness,
 )
-from src.utils import make_optional, to_camel
+from src.utils import partial_model, to_camel
 
 
 class ProstheticBaseModel(BaseModel):
@@ -179,7 +179,8 @@ class ProstheticCreateModel(ProstheticBaseModel):
     pass
 
 
-class ProstheticUpdateModel(make_optional(ProstheticBaseModel)):
+@partial_model
+class ProstheticUpdateModel(ProstheticBaseModel):
     """Schema for updating an existing prosthetic."""
 
     pass

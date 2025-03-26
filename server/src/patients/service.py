@@ -1,3 +1,5 @@
+from datetime import date
+from dateutil.relativedelta import relativedelta
 from fastapi import HTTPException, status
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -91,6 +93,9 @@ class PatientsService:
             ],
         )
 
+        if patient_data.birth_date:
+            new_patient.age = relativedelta(date.today(), patient_data.birth_date).years
+
         session.add(new_patient)
         await session.commit()
         return new_patient
@@ -105,6 +110,9 @@ class PatientsService:
         update_data = patient_data.model_dump(exclude_unset=True)
         for key, value in update_data.items():
             setattr(patient, key, value)
+
+        if patient_data.birth_date:
+            patient.age = relativedelta(date.today(), patient_data.birth_date).years
 
         await session.commit()
         await session.refresh(patient)

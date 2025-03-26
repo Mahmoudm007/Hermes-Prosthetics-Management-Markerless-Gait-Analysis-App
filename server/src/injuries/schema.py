@@ -3,7 +3,7 @@ from typing import Optional
 from datetime import date, datetime
 
 from src.db.model.enum import Side
-from src.utils import make_optional, to_camel
+from src.utils import partial_model, to_camel
 
 
 class PatientInjuryBaseModel(BaseModel):
@@ -66,7 +66,8 @@ class PatientInjuryCreateModel(PatientInjuryBaseModel):
     pass
 
 
-class PatientInjuryUpdateModel(make_optional(PatientInjuryBaseModel)):
+@partial_model
+class PatientInjuryUpdateModel(PatientInjuryBaseModel):
     """Schema for updating an existing patient injury."""
 
     pass

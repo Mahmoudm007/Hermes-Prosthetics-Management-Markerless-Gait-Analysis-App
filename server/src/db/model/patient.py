@@ -1,5 +1,6 @@
+from sqlalchemy import Column, DateTime
 from sqlmodel import Field, Relationship, SQLModel
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 from typing import List, Optional
 
 from src.db.model.enum import Sex, LimbDominance
@@ -64,12 +65,16 @@ class Patient(SQLModel, table=True):
     )
 
     created_at: datetime = Field(
-        default_factory=datetime.utcnow,
-        description="Timestamp indicating when the patient record was created.",
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column=Column(DateTime(timezone=True)),
+        description="Timestamp when the record was created.",
     )
     updated_at: datetime = Field(
-        default_factory=datetime.utcnow,
-        description="Timestamp of the most recent update to the patient record.",
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column=Column(
+            DateTime(timezone=True), onupdate=lambda: datetime.now(timezone.utc)
+        ),
+        description="Timestamp when the record was last updated.",
     )
 
     def __repr__(self) -> str:

@@ -30,6 +30,8 @@ class InjuriesService:
         new_injury = PatientInjury(
             **injury_data.model_dump(),
         )
+        if injury_data.injury_date:
+            new_injury.injury_year = injury_data.injury_date.year
 
         session.add(new_injury)
         await session.commit()
@@ -43,6 +45,9 @@ class InjuriesService:
         update_data = injury_data.model_dump(exclude_unset=True)
         for key, value in update_data.items():
             setattr(injury, key, value)
+
+        if injury_data.injury_date:
+            injury.injury_year = injury_data.injury_date.year
 
         await session.commit()
         await session.refresh(injury)
