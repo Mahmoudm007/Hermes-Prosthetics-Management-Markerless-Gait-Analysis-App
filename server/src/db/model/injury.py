@@ -1,6 +1,6 @@
-from sqlalchemy import Column, DateTime
+from sqlalchemy import TEXT, Column, DateTime
 from sqlmodel import Relationship, SQLModel, Field
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from typing import Optional
 
 from src.db.model.enum import Side
@@ -22,7 +22,7 @@ class PatientInjury(SQLModel, table=True):
     injury_type: str = Field(
         ..., description="Type of injury sustained by the patient."
     )
-    injury_date: Optional[datetime] = Field(
+    injury_date: Optional[date] = Field(
         default=None, description="Date when the injury occurred (if known)."
     )
     injury_year: Optional[int] = Field(
@@ -37,10 +37,15 @@ class PatientInjury(SQLModel, table=True):
     )
     current_impact: Optional[str] = Field(
         default=None,
-        description="Current impact of the injury on the patient’s health or mobility.",
+        description="Current impact of the injury on the patient's health or mobility.",
     )
     side: Side = Field(
         default=Side.Unknown, description="Which side of the body the injury affected."
+    )
+    details: Optional[str] = Field(
+        default=None,
+        description="Additional details about the injury, its treatment, etc.",
+        sa_column=Column(TEXT, nullable=True),
     )
 
     patient_id: int = Field(

@@ -1,6 +1,6 @@
-from sqlalchemy import Column, DateTime
+from sqlalchemy import TEXT, Column, DateTime
 from sqlmodel import Relationship, SQLModel, Field
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from typing import Optional
 
 from src.db.model.enum import Severity, TreatmentStatus
@@ -22,7 +22,7 @@ class PatientMedicalCondition(SQLModel, table=True):
     medical_condition_name: str = Field(
         description="Name of the diagnosed medical condition."
     )
-    diagnosis_date: Optional[datetime] = Field(
+    diagnosis_date: Optional[date] = Field(
         default=None, description="Date of diagnosis (if available)."
     )
     diagnosis_year: Optional[int] = Field(
@@ -34,6 +34,11 @@ class PatientMedicalCondition(SQLModel, table=True):
     treatment_status: TreatmentStatus = Field(
         default=TreatmentStatus.Unknown,
         description="Current treatment status of the condition.",
+    )
+    details: Optional[str] = Field(
+        default=None,
+        description="Additional details about the medical condition.",
+        sa_column=Column(TEXT, nullable=True),
     )
 
     patient_id: int = Field(
