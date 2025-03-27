@@ -1,17 +1,68 @@
 from datetime import date
+from math import ceil
 from dateutil.relativedelta import relativedelta
 from fastapi import HTTPException, status
+from sqlalchemy import func
+from sqlalchemy.orm import noload
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.db.models import Patient
-from src.patients.schema import PatientCreateModel, PatientUpdateModel
+from src.patients.schema import (
+    PatientCreateModel,
+    PatientListResponseModel,
+    PatientUpdateModel,
+)
 from src.db.model.injury import PatientInjury
 from src.db.model.prosthetic import Prosthetic
 from src.db.model.medical_condition import PatientMedicalCondition
 
+from src.utils import PaginatedResponse
+
 
 class PatientsService:
+    async def get_all_patients(
+        self,
+        session: AsyncSession,
+        page: int = 1,
+        limit: int = 10,
+        search: str | None = None,
+    ) -> PaginatedResponse[PatientListResponseModel]:
+        base_query = (
+            select(Patient)
+            .options(
+                noload(Patient.medical_conditions),
+                noload(Patient.injuries),
+                noload(Patient.prosthetics),
+            )
+            .order_by(Patient.first_name, Patient.last_name)
+        )
+        total_patients_query = select(func.count()).select_from(Patient)
+
+        if search:
+            full_name = Patient.first_name + " " + Patient.last_name
+            where_clause = full_name.ilike(f"%{search}%")
+            base_query = base_query.where(where_clause)
+            total_patients_query = total_patients_query.where(where_clause)
+
+        total_patients_result = await session.exec(total_patients_query)
+        total_patients = total_patients_result.first()
+        total_pages = max(1, ceil(total_patients / limit))
+
+        offset = (page - 1) * limit
+        paginated_query = base_query.offset(offset).limit(limit)
+
+        result = await session.exec(paginated_query)
+        patients = result.all()
+
+        return {
+            "items": patients,
+            "page": page,
+            "count": len(patients),
+            "total_pages": total_pages,
+            "has_next_page": page < total_pages,
+        }
+
     async def get_patient_by_id(self, id: int, session: AsyncSession) -> Patient:
         statement = select(Patient).where(Patient.id == id)
         result = await session.exec(statement)

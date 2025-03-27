@@ -103,8 +103,8 @@ class PatientUpdateModel(PatientBaseModel):
     pass
 
 
-class PatientResponseModel(PatientBaseModel):
-    """Schema for retrieving a patient, including related entities."""
+class PatientListResponseModel(PatientBaseModel):
+    """Schema for retrieving a list of patients."""
 
     id: int = Field(..., example=1024, description="Unique patient ID.")
     created_at: datetime = Field(
@@ -117,6 +117,16 @@ class PatientResponseModel(PatientBaseModel):
         example="2024-02-01T14:45:30Z",
         description="Timestamp of the last update to the patient record.",
     )
+
+    class Config:
+        alias_generator = to_camel
+        populate_by_name = True
+        from_attributes = True
+
+
+class PatientResponseModel(PatientListResponseModel):
+    """Schema for retrieving a patient, including related entities."""
+
     medical_conditions: List[PatientMedicalConditionResponseModel] = Field(
         ...,
         description="List of medical conditions associated with theModel patient.",
