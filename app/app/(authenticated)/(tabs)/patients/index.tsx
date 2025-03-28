@@ -13,12 +13,14 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import PatientsListItem from '@/components/patients-list-item';
 import { FloatingActionButton } from '@/components/floating-action-button';
 
+import { useSearchStore } from '@/lib/search-store';
 import { axiosClient } from '@/lib/axios';
 import { Colors } from '@/constants/Colors';
 import type { PaginatedResponse, PatientListItem } from '@/types';
 
 export default function PatientsPage() {
   const router = useRouter();
+  const { searchValue } = useSearchStore();
 
   const {
     data,
@@ -29,13 +31,14 @@ export default function PatientsPage() {
     refetch,
     isRefetching,
   } = useInfiniteQuery({
-    queryKey: ['patients'],
+    queryKey: [`patients_${searchValue}`],
     queryFn: async ({ pageParam = 1 }) => {
       const data = await axiosClient.get<PaginatedResponse<PatientListItem>>(
         'patients',
         {
           params: {
             page: pageParam,
+            search: searchValue,
           },
         }
       );
