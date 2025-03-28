@@ -4,6 +4,7 @@ import { Stack, usePathname, useRouter, useSegments } from 'expo-router';
 import { ClerkLoaded, ClerkProvider, useAuth } from '@clerk/clerk-expo';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { Toaster } from 'sonner-native';
 
 import { tokenCache } from '@/lib/cache';
@@ -64,10 +65,12 @@ export default function RootLayout() {
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
       <ClerkLoaded>
         <QueryClientProvider client={queryClient}>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <Toaster />
-            <InitialLayout />
-          </GestureHandlerRootView>
+          <ActionSheetProvider>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <Toaster />
+              <InitialLayout />
+            </GestureHandlerRootView>
+          </ActionSheetProvider>
         </QueryClientProvider>
       </ClerkLoaded>
     </ClerkProvider>

@@ -1,5 +1,13 @@
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import { useRouter } from 'expo-router';
+import { useActionSheet } from '@expo/react-native-action-sheet';
 
 import { SwipeableRow, SwipeAction } from './swipeable-row';
 
@@ -11,19 +19,95 @@ interface PatientsListItemProps {
 
 export default function PatientsListItem({ patient }: PatientsListItemProps) {
   const router = useRouter();
+  const { showActionSheetWithOptions } = useActionSheet();
+
+  const onViewProfile = () => {
+    router.push({
+      pathname: '/patient/[id]',
+      params: {
+        id: patient.id,
+        name: `${patient.firstName} ${patient.lastName}`,
+      },
+    });
+  };
+
+  const onUpdate = () => {
+    console.log('Update Patient Details pressed');
+  };
+
+  const onDelete = () => {
+    Alert.alert(
+      `Delete ${patient.firstName} ${patient.lastName} Record`,
+      `Are you sure you want to delete ${patient.firstName} ${patient.lastName} record? This action cannot be undone.`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          onPress: () => console.log('Deleting patient', patient.id),
+        },
+      ]
+    );
+  };
 
   const swipeActions: SwipeAction[] = [
+    {
+      text: 'More',
+      color: '#8E8E93',
+      icon: 'ellipsis-horizontal',
+      onPress: () => {
+        const options = [
+          'View Patient Profile',
+          'Update Patient Details',
+          'Delete Patient',
+          'Cancel',
+        ];
+        const destructiveButtonIndex = 2;
+        const cancelButtonIndex = 3;
+
+        showActionSheetWithOptions(
+          {
+            title: `Actions for ${patient.firstName} ${patient.lastName}`,
+            options,
+            cancelButtonIndex,
+            destructiveButtonIndex,
+          },
+          (selectedIndex) => {
+            switch (selectedIndex) {
+              case 0:
+                onViewProfile();
+                break;
+
+              case 1:
+                onUpdate();
+                break;
+
+              case destructiveButtonIndex:
+                onDelete();
+                break;
+
+              case cancelButtonIndex:
+            }
+          }
+        );
+      },
+      platform: 'ios',
+    },
     {
       text: 'Update',
       color: '#007AFF',
       icon: 'pencil',
-      onPress: () => console.log('Update pressed'),
+      platform: 'android',
+      onPress: onUpdate,
     },
     {
       text: 'Delete',
       color: '#ff3b30',
       icon: 'trash',
-      onPress: () => console.log('Delete pressed'),
+      platform: 'android',
+      onPress: onDelete,
     },
   ];
 
@@ -31,13 +115,8 @@ export default function PatientsListItem({ patient }: PatientsListItemProps) {
     <SwipeableRow actions={swipeActions}>
       <TouchableOpacity
         style={styles.touchableOpacity}
-        activeOpacity={0.8}
-        onPress={() => {
-          router.push({
-            pathname: '/patient/[id]',
-            params: { id: patient.id },
-          });
-        }}
+        activeOpacity={0.6}
+        onPress={onViewProfile}
       >
         <View style={styles.listItemContainer}>
           <Image

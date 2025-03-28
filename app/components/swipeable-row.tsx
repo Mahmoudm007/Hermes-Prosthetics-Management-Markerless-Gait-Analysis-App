@@ -1,5 +1,12 @@
 import { useRef } from 'react';
-import { Animated, StyleSheet, Text, View, Pressable } from 'react-native';
+import {
+  Animated,
+  StyleSheet,
+  Text,
+  View,
+  Pressable,
+  Platform,
+} from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -8,6 +15,7 @@ export interface SwipeAction {
   color: string;
   icon: keyof typeof Ionicons.glyphMap;
   onPress: () => void;
+  platform?: 'ios' | 'android' | 'web';
 }
 
 interface SwipeableRowProps {
@@ -66,9 +74,13 @@ export function SwipeableRow({
     progress: Animated.AnimatedInterpolation<number>,
     _dragAnimatedValue: Animated.AnimatedInterpolation<number>
   ) => {
-    if (actions.length === 0) return null;
+    const filteredActions = actions.filter(
+      (action) => !action.platform || action.platform === Platform.OS
+    );
 
-    const width = actions.length * 96;
+    if (filteredActions.length === 0) return null;
+
+    const width = filteredActions.length * 96;
 
     return (
       <View
@@ -77,8 +89,8 @@ export function SwipeableRow({
           flexDirection: 'row',
         }}
       >
-        {actions.map((action, index) => {
-          const x = (actions.length - index) * 96;
+        {filteredActions.map((action, index) => {
+          const x = (filteredActions.length - index) * 96;
           return renderRightAction(action, x, progress, index);
         })}
       </View>
