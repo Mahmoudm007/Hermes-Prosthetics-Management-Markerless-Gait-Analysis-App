@@ -216,7 +216,7 @@ class SuspensionSystem(str, Enum):
     """
 
     Suction = "Suction"  # (Suction)
-    VacuumAssisted = "Vacuum Assisted"  # (Vacuum Assisted)
+    VacuumAssisted = "VacuumAssisted"  # (Vacuum Assisted)
     PinLock = "Pin Lock"  # (Pin Lock)
     Straps = "Straps"  # (Straps)
     Other = "Other"  # (Other)
@@ -236,9 +236,9 @@ class FootType(str, Enum):
     """
 
     SACH = "SACH"  # (SACH)
-    DynamicResponse = "Dynamic Response"  # (Dynamic Response)
+    DynamicResponse = "DynamicResponse"  # (Dynamic Response)
     Multiaxial = "Multiaxial"  # (Multiaxial)
-    EnergyStoring = "Energy Storing"  # (Energy Storing)
+    EnergyStoring = "EnergyStoring"  # (Energy Storing)
     Microprocessor = "Microprocessor"  # (Microprocessor)
     Other = "Other"  # (Other)
 
@@ -260,9 +260,7 @@ class KneeType(str, Enum):
     Mechanical = "Mechanical"  # (Mechanical)
     Hydraulic = "Hydraulic"  # (Hydraulic)
     Pneumatic = "Pneumatic"  # (Pneumatic)
-    MicroprocessorControlled = (
-        "Microprocessor Controlled"  # (Microprocessor Controlled)
-    )
+    MicroprocessorControlled = "MicroprocessorControlled"  # (Microprocessor Controlled)
     Other = "Other"  # (Other)
 
 
@@ -278,9 +276,9 @@ class MaterialType(str, Enum):
         - Other: Any other material type.
     """
 
-    CarbonFiber = "Carbon Fiber"  # (Carbon Fiber)
+    CarbonFiber = "CarbonFiber"  # (Carbon Fiber)
     Titanium = "Titanium"  # (Titanium)
-    PlasticComposite = "Plastic Composite"  # (Plastic Composite)
+    PlasticComposite = "PlasticComposite"  # (Plastic Composite)
     Aluminum = "Aluminum"  # (Aluminum)
     Other = "Other"  # (Other)
 
@@ -298,9 +296,7 @@ class ControlSystem(str, Enum):
 
     Mechanical = "Mechanical"  # (Mechanical)
     Hybrid = "Hybrid"  # (Hybrid)
-    MicroprocessorControlled = (
-        "Microprocessor Controlled"  # (Microprocessor Controlled)
-    )
+    MicroprocessorControlled = "MicroprocessorControlled"  # (Microprocessor Controlled)
     Other = "Other"  # (Other)
 
 
@@ -317,7 +313,7 @@ class SocketFit(str, Enum):
     """
 
     Perfect = "Perfect"  # (Perfect)
-    SlightDiscomfort = "Slight Discomfort"  # (Slight Discomfort)
+    SlightDiscomfort = "SlightDiscomfort"  # (Slight Discomfort)
     Loose = "Loose"  # (Loose)
     Painful = "Painful"  # (Painful)
     Unknown = "Unknown"  # (Unknown)

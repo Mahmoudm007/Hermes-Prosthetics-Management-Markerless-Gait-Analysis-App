@@ -17,6 +17,19 @@ export default function AuthenticatedLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name='patient/new'
+        options={{
+          presentation: 'modal',
+        }}
+      />
+      <Stack.Screen
+        name='patient/[id]'
+        options={{
+          title: 'Patient Profile',
+          presentation: 'modal',
+        }}
+      />
     </Stack>
   );
 }

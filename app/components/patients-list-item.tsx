@@ -11,6 +11,7 @@ import { useActionSheet } from '@expo/react-native-action-sheet';
 
 import { SwipeableRow, SwipeAction } from './swipeable-row';
 
+import { Colors } from '@/constants/Colors';
 import type { PatientListItem } from '@/types';
 
 interface PatientsListItemProps {
@@ -55,7 +56,7 @@ export default function PatientsListItem({ patient }: PatientsListItemProps) {
   const swipeActions: SwipeAction[] = [
     {
       text: 'More',
-      color: '#8E8E93',
+      color: Colors.dark,
       icon: 'ellipsis-horizontal',
       onPress: () => {
         const options = [
@@ -93,18 +94,18 @@ export default function PatientsListItem({ patient }: PatientsListItemProps) {
           }
         );
       },
-      platform: 'ios',
+      // platform: 'ios',
     },
     {
       text: 'Update',
-      color: '#007AFF',
+      color: Colors.blue,
       icon: 'pencil',
       platform: 'android',
       onPress: onUpdate,
     },
     {
       text: 'Delete',
-      color: '#ff3b30',
+      color: Colors.tertiary,
       icon: 'trash',
       platform: 'android',
       onPress: onDelete,
@@ -162,7 +163,6 @@ const styles = StyleSheet.create({
     gap: 10,
     height: 50,
     paddingHorizontal: 14,
-    backgroundColor: '#fff',
   },
   listItemImage: {
     width: 40,
@@ -170,17 +170,16 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   patientName: {
-    color: '#000',
     fontSize: 14,
     fontWeight: 'bold',
   },
   patientDetail: {
-    color: '#6E6E73',
+    color: Colors.lightText,
     fontSize: 12,
   },
   separator: {
     height: StyleSheet.hairlineWidth,
-    backgroundColor: '#DCDCE2',
+    backgroundColor: Colors.lightBorder,
     marginLeft: 50,
   },
 });

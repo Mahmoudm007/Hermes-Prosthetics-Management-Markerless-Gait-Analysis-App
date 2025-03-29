@@ -10,6 +10,8 @@ import {
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { Ionicons } from '@expo/vector-icons';
 
+import { Colors } from '@/constants/Colors';
+
 export interface SwipeAction {
   text: string;
   color: string;
@@ -61,7 +63,7 @@ export function SwipeableRow({
           <Ionicons
             name={action.icon}
             size={24}
-            color={'#fff'}
+            color={Colors.background}
             style={{ paddingTop: 10 }}
           />
           <Text style={styles.actionText}>{action.text}</Text>

@@ -1,3 +1,4 @@
+import React from 'react';
 import { TouchableOpacity, StyleSheet } from 'react-native';
 import * as DropdownMenu from 'zeego/dropdown-menu';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,6 +9,7 @@ import { Colors } from '@/constants/Colors';
 interface MenuItem {
   key: string;
   title: string;
+  style?: React.CSSProperties;
   icon?: SFSymbol;
   onSelect?: () => void;
 }
@@ -41,7 +43,9 @@ export function MoreButton({ menuConfig }: MoreButtonProps = {}) {
               const item = entry as MenuItem;
               return (
                 <DropdownMenu.Item key={item.key} onSelect={item.onSelect}>
-                  <DropdownMenu.ItemTitle>{item.title}</DropdownMenu.ItemTitle>
+                  <DropdownMenu.ItemTitle style={item.style}>
+                    {item.title}
+                  </DropdownMenu.ItemTitle>
                   {item.icon && (
                     <DropdownMenu.ItemIcon
                       ios={{
@@ -60,7 +64,7 @@ export function MoreButton({ menuConfig }: MoreButtonProps = {}) {
                 <DropdownMenu.Group key={`group-${index}`} title={group.title}>
                   {group.items.map((item) => (
                     <DropdownMenu.Item key={item.key} onSelect={item.onSelect}>
-                      <DropdownMenu.ItemTitle>
+                      <DropdownMenu.ItemTitle style={item.style}>
                         {item.title}
                       </DropdownMenu.ItemTitle>
                       {item.icon && (
