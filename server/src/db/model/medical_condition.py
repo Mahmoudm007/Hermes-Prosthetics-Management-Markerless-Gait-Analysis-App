@@ -37,8 +37,8 @@ class PatientMedicalCondition(SQLModel, table=True):
     )
     details: Optional[str] = Field(
         default=None,
-        description="Additional details about the medical condition.",
         sa_column=Column(TEXT, nullable=True),
+        description="Additional details about the medical condition, its severity, symptoms, treatment, etc.",
     )
 
     patient_id: int = Field(

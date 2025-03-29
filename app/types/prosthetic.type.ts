@@ -221,6 +221,8 @@ export const toePositionLabels: Record<ToePosition, string> = {
 };
 
 export type Prosthetic = {
+  id: number;
+  patientId: number;
   weight: number | null;
   length: number | null;
   usageDuration: number | null;
@@ -257,8 +259,7 @@ export type Prosthetic = {
   shockAbsorptionEnergy: number | null;
   manufacturer: string | null;
   model: string | null;
-  patientId: number;
-  id: number;
+  details: string | null;
   createdAt: string;
   updatedAt: string;
 };

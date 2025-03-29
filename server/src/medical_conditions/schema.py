@@ -39,6 +39,11 @@ class PatientMedicalConditionBaseModel(BaseModel):
         example=TreatmentStatus.UnderControl,
         description="Current treatment status, which determines ongoing medical interventions.",
     )
+    details: Optional[str] = Field(
+        default=None,
+        example="Patient experiences chronic pain and stiffness in joints.",
+        description="Additional details about the medical condition, its severity, symptoms, treatment, etc.",
+    )
 
     class Config:
         alias_generator = to_camel

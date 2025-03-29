@@ -227,6 +227,11 @@ class ProstheticBaseModel(BaseModel):
         example="Pro-Flex",
         description="Model name or number of the prosthetic (e.g., Pro-Flex, C-Leg).",
     )
+    details: Optional[str] = Field(
+        default=None,
+        example="Custom prosthetic designed for high-impact sports.",
+        description="Additional notes on the prosthetic (e.g., specs, installation details).",
+    )
 
     class Config:
         alias_generator = to_camel

@@ -22,6 +22,7 @@ export type Injury = {
   treatmentMethod: string | null;
   currentImpact: string | null;
   side: Side;
+  details: string | null;
   createdAt: string;
   updatedAt: string;
 };

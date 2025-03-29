@@ -46,6 +46,11 @@ class PatientInjuryBaseModel(BaseModel):
         example=Side.Right,
         description="Which side of the body the injury affected.",
     )
+    details: Optional[str] = Field(
+        default=None,
+        example="Sustained during a fall",
+        description="Additional details about the injury, its treatment, etc.",
+    )
 
     class Config:
         alias_generator = to_camel

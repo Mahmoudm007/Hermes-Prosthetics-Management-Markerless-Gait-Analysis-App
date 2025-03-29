@@ -36,6 +36,7 @@ export type MedicalCondition = {
   diagnosisYear: number | number;
   severity: Severity;
   treatmentStatus: TreatmentStatus;
+  details: string | null;
   createdAt: string;
   updatedAt: string;
 };
