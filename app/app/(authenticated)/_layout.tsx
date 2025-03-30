@@ -28,6 +28,8 @@ export default function AuthenticatedLayout() {
         options={{
           title: 'Patient Profile',
           presentation: 'modal',
+          headerTintColor: Colors.primary,
+          headerTitleStyle: { color: '#000' },
         }}
       />
     </Stack>

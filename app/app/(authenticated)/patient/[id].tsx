@@ -18,14 +18,23 @@ import {
   FontAwesome5,
   Fontisto,
   AntDesign,
+  FontAwesome6,
 } from '@expo/vector-icons';
 
+import { MoreButton } from '@/components/more-button';
 import InfoItem from '@/components/patient-profile/info-item';
 import SectionHeader from '@/components/patient-profile/section-header';
 import MedicalConditionCard from '@/components/patient-profile/medical-condition-card';
 import InjuryCard from '@/components/patient-profile/injury-card';
 import ProstheticCard from '@/components/patient-profile/prosthetic-card';
 import ProstheticsBodyDiagram from '@/components/patient-profile/prosthetics-body-diagram';
+import MedicalConditionDetailsSheet from '@/components/patient-profile/medical-condition-details-sheet';
+import InjuryDetailsSheet from '@/components/patient-profile/injury-details-sheet';
+import ProstheticDetailsSheet from '@/components/patient-profile/prosthetic-details-sheet';
+
+import { useMedicalConditionStore } from '@/hooks/use-medical-condition-store';
+import { useInjuryStore } from '@/hooks/use-injury-store';
+import { useProstheticStore } from '@/hooks/use-prosthetic-store';
 
 import { axiosClient } from '@/lib/axios';
 import { patientProfileStyles } from '@/constants/patient-profile-styles';
@@ -37,7 +46,6 @@ import {
   sexIcons,
   sexLabels,
 } from '@/types';
-import { MoreButton } from '@/components/more-button';
 
 export default function PatientProfile() {
   const { id, name } = useLocalSearchParams();
@@ -57,8 +65,32 @@ export default function PatientProfile() {
     },
   });
 
+  const {
+    selectedMedicalCondition,
+    isMedicalConditionDetailsSheetVisible,
+    hideMedicalConditionDetails,
+    reset: resetMedicalConditionStore,
+  } = useMedicalConditionStore();
+
+  const {
+    selectedInjury,
+    isInjuryDetailsSheetVisible,
+    hideInjuryDetails,
+    reset: resetInjuryStore,
+  } = useInjuryStore();
+
+  const {
+    selectedProsthetic,
+    isProstheticDetailsSheetVisible,
+    hideProstheticDetails,
+    reset: resetProstheticStore,
+  } = useProstheticStore();
+
   useEffect(() => {
     if (id) {
+      resetMedicalConditionStore();
+      resetInjuryStore();
+      resetProstheticStore();
       navigation.setOptions({
         headerRight: () => (
           <MoreButton
@@ -254,7 +286,7 @@ export default function PatientProfile() {
           {patient.limbDominance && (
             <InfoItem
               icon={
-                <FontAwesome5
+                <FontAwesome6
                   name={limbDominanceIcons[patient.limbDominance]}
                   size={24}
                   color={Colors.primary}
@@ -339,6 +371,24 @@ export default function PatientProfile() {
           ))}
         </View>
       </ScrollView>
+
+      <MedicalConditionDetailsSheet
+        medicalCondition={selectedMedicalCondition}
+        isVisible={isMedicalConditionDetailsSheetVisible}
+        onClose={hideMedicalConditionDetails}
+      />
+
+      <InjuryDetailsSheet
+        injury={selectedInjury}
+        isVisible={isInjuryDetailsSheetVisible}
+        onClose={hideInjuryDetails}
+      />
+
+      <ProstheticDetailsSheet
+        prosthetic={selectedProsthetic}
+        isVisible={isProstheticDetailsSheetVisible}
+        onClose={hideProstheticDetails}
+      />
     </SafeAreaView>
   );
 }

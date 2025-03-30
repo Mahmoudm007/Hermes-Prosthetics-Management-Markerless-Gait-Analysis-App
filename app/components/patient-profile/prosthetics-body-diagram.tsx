@@ -1,3 +1,5 @@
+'use client';
+
 import { useMemo, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Colors } from '@/constants/Colors';
@@ -9,6 +11,7 @@ import Body, {
 
 import BodyDiagramViewToggle from './body-diagram-view-toggle';
 import { type Prosthetic, ProstheticType, Sex, Side } from '@/types';
+import { useProstheticStore } from '@/hooks/use-prosthetic-store';
 
 interface ProstheticsBodyDiagramProps {
   prosthetics: Prosthetic[];
@@ -16,33 +19,34 @@ interface ProstheticsBodyDiagramProps {
   onProstheticSelect?: (prosthetic: Prosthetic | undefined) => void;
 }
 
-const BODY_PARTS_MAPPING: { [key in string]: ProstheticType } = {
-  tibialis: ProstheticType.Transtibial,
-  quadriceps: ProstheticType.Transfemoral,
-  feet: ProstheticType.PartialFoot,
-  ankles: ProstheticType.Syme,
-  knees: ProstheticType.KneeDisarticulation,
-  gluteal: ProstheticType.HipDisarticulation,
-  triceps: ProstheticType.Transhumeral,
-  forearm: ProstheticType.Transradial,
-  hands: ProstheticType.Hand,
-  deltoids: ProstheticType.ShoulderDisarticulation,
+const PROSTHETIC_TO_BODY_PART: Partial<Record<ProstheticType, Slug>> = {
+  [ProstheticType.Transtibial]: 'tibialis',
+  [ProstheticType.Transfemoral]: 'quadriceps',
+  [ProstheticType.PartialFoot]: 'feet',
+  [ProstheticType.Syme]: 'ankles',
+  [ProstheticType.KneeDisarticulation]: 'knees',
+  [ProstheticType.HipDisarticulation]: 'gluteal',
+  [ProstheticType.Transhumeral]: 'triceps',
+  [ProstheticType.Transradial]: 'forearm',
+  [ProstheticType.Hand]: 'hands',
+  [ProstheticType.ShoulderDisarticulation]: 'deltoids',
 };
 
-const PROSTHETIC_TO_BODY_PART = Object.entries(BODY_PARTS_MAPPING).reduce(
+const BODY_PART_TO_PROSTHETIC = Object.entries(PROSTHETIC_TO_BODY_PART).reduce(
   (acc, [key, value]) => {
-    acc[value] = key as Slug;
+    acc[value] = key as unknown as ProstheticType;
     return acc;
   },
-  {} as Record<ProstheticType, Slug>
+  {} as Record<Slug, ProstheticType>
 );
 
 export default function ProstheticsBodyDiagram({
   prosthetics,
-  sex,
+  sex = Sex.Female,
   onProstheticSelect,
 }: ProstheticsBodyDiagramProps) {
   const [viewSide, setViewSide] = useState<'front' | 'back'>('front');
+  const { showProstheticDetails } = useProstheticStore();
 
   const mapSide = (side: Side): 'left' | 'right' | undefined => {
     switch (side) {
@@ -51,6 +55,7 @@ export default function ProstheticsBodyDiagram({
       case Side.Right:
         return 'right';
       case Side.Bilateral:
+      case Side.Unknown:
         return undefined;
     }
   };
@@ -72,15 +77,25 @@ export default function ProstheticsBodyDiagram({
   const handleBodyPartPress = (part: ExtendedBodyPart, bodySide?: string) => {
     if (!part.slug) return;
 
-    const prostheticType = BODY_PARTS_MAPPING[part.slug];
+    const prostheticType = BODY_PART_TO_PROSTHETIC[part.slug];
+    if (!prostheticType) return;
+
     const prosthetic = prosthetics.find((p) => {
-      const isSameSideOrBilateral = bodySide
-        ? p.side.toLowerCase() === bodySide
-        : p.side === Side.Bilateral;
-      return p.type === prostheticType && isSameSideOrBilateral;
+      if (bodySide) {
+        const clickedSide = bodySide === 'left' ? Side.Left : Side.Right;
+        return (
+          p.type === prostheticType &&
+          (p.side === clickedSide || p.side === Side.Bilateral)
+        );
+      } else {
+        return p.type === prostheticType && p.side === Side.Bilateral;
+      }
     });
 
-    onProstheticSelect?.(prosthetic);
+    if (prosthetic) {
+      onProstheticSelect?.(prosthetic);
+      showProstheticDetails(prosthetic);
+    }
   };
 
   return (

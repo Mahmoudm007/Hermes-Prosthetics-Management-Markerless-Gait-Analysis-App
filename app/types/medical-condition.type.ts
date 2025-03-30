@@ -32,8 +32,8 @@ export type MedicalCondition = {
   id: number;
   patientId: number;
   medicalConditionName: string;
-  diagnosisDate: string | number;
-  diagnosisYear: number | number;
+  diagnosisDate: string | null;
+  diagnosisYear: number | null;
   severity: Severity;
   treatmentStatus: TreatmentStatus;
   details: string | null;

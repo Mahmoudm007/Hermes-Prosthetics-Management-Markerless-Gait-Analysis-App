@@ -103,4 +103,84 @@ export const patientProfileStyles = StyleSheet.create({
     color: Colors.dark,
     marginBottom: 3,
   },
+  sheetBackground: {
+    backgroundColor: 'white',
+  },
+  indicator: {
+    backgroundColor: Colors.tertiary,
+    width: 50,
+  },
+  contentContainer: {
+    padding: 20,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginLeft: 12,
+    color: '#2c3e50',
+    flex: 1,
+  },
+  sheetContainer: {
+    marginBottom: 60,
+  },
+  sheetSectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: Colors.primary,
+    marginBottom: 8,
+  },
+  sheetInfoSection: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+  },
+  sheetDetailsIcon: {
+    width: 40,
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+  },
+  sheetDetailsSection: {
+    marginTop: 8,
+  },
+  sheetDetailsText: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: '#2c3e50',
+  },
+  sheetActionButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    backgroundColor: Colors.background,
+  },
+  sheetActionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    flex: 1,
+    marginHorizontal: 8,
+  },
+  sheetUpdateButton: {
+    backgroundColor: Colors.blue,
+  },
+  sheetDeleteButton: {
+    backgroundColor: Colors.destructive,
+  },
+  sheetDisabledActionButton: {
+    backgroundColor: '#d3d3d3',
+  },
+  sheetActionButtonText: {
+    color: 'white',
+    fontWeight: '600',
+    fontSize: 16,
+    marginLeft: 8,
+  },
 });

@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { Toaster } from 'sonner-native';
+import { configureReanimatedLogger } from 'react-native-reanimated';
 
 import { tokenCache } from '@/lib/cache';
 import { Colors } from '@/constants/Colors';
@@ -18,6 +19,12 @@ if (!publishableKey) {
   throw new Error(
     'Missing Publishable Key. Please set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in your .env'
   );
+}
+
+if (__DEV__) {
+  configureReanimatedLogger({
+    strict: false,
+  });
 }
 
 function InitialLayout() {

@@ -1,11 +1,11 @@
-import { Alert, Text, TouchableOpacity, View } from 'react-native';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Text, TouchableOpacity, View } from 'react-native';
 import * as ContextMenu from 'zeego/context-menu';
 import { format, formatDistanceToNow } from 'date-fns';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { toast } from 'sonner-native';
 
-import { axiosClient } from '@/lib/axios';
+import { useInjuryStore } from '@/hooks/use-injury-store';
+import { useDeleteInjury } from '@/hooks/use-delete-injury';
+
 import { patientProfileStyles } from '@/constants/patient-profile-styles';
 import { Colors } from '@/constants/Colors';
 import { sideLabels, type Injury } from '@/types';
@@ -15,27 +15,21 @@ interface InjuryCardProps {
 }
 
 export default function InjuryCard({ injury }: InjuryCardProps) {
-  const queryClient = useQueryClient();
+  const { showInjuryDetails } = useInjuryStore();
 
-  const { mutate: deleteInjury, isPending } = useMutation({
-    mutationFn: async () => {
-      return await axiosClient.delete<Injury>(`injuries/${injury.id}`);
-    },
-    onError: () => {
-      return toast.error('Failed to delete this injury');
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [`patient_${injury.patientId}`],
-      });
-      return toast.success('Injury deleted successfully');
-    },
+  const { handleDelete, isPending } = useDeleteInjury({
+    id: injury.id,
+    patientId: injury.patientId,
   });
 
   return (
     <ContextMenu.Root>
       <ContextMenu.Trigger disabled={isPending}>
-        <TouchableOpacity style={patientProfileStyles.card} activeOpacity={0.6}>
+        <TouchableOpacity
+          style={patientProfileStyles.card}
+          activeOpacity={0.6}
+          // onPress={() => showInjuryDetails(injury)}
+        >
           <View style={patientProfileStyles.cardHeader}>
             <FontAwesome5 name='band-aid' size={20} color={Colors.secondary} />
             <Text style={patientProfileStyles.cardTitle}>
@@ -79,7 +73,10 @@ export default function InjuryCard({ injury }: InjuryCardProps) {
       </ContextMenu.Trigger>
       <ContextMenu.Content>
         <ContextMenu.Label />
-        <ContextMenu.Item key={`details_inujury_${injury.id}`}>
+        <ContextMenu.Item
+          key={`details_inujury_${injury.id}`}
+          onSelect={() => showInjuryDetails(injury)}
+        >
           <ContextMenu.ItemTitle>Injury Details</ContextMenu.ItemTitle>
           <ContextMenu.ItemIcon
             ios={{
@@ -99,22 +96,7 @@ export default function InjuryCard({ injury }: InjuryCardProps) {
         </ContextMenu.Item>
         <ContextMenu.Item
           key={`delete_inujury_${injury.id}`}
-          onSelect={() => {
-            Alert.alert(
-              'Delete Injury',
-              'Are you sure you want to delete this injury?',
-              [
-                {
-                  text: 'Cancel',
-                  style: 'cancel',
-                },
-                {
-                  text: 'Delete',
-                  onPress: () => deleteInjury(),
-                },
-              ]
-            );
-          }}
+          onSelect={handleDelete}
         >
           <ContextMenu.ItemTitle>Delete Prosthetic</ContextMenu.ItemTitle>
           <ContextMenu.ItemIcon

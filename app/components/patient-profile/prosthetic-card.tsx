@@ -1,11 +1,11 @@
-import { Alert, Text, TouchableOpacity, View } from 'react-native';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Text, TouchableOpacity, View } from 'react-native';
 import * as ContextMenu from 'zeego/context-menu';
 import { format, formatDistanceToNow } from 'date-fns';
 import { MaterialIcons } from '@expo/vector-icons';
-import { toast } from 'sonner-native';
 
-import { axiosClient } from '@/lib/axios';
+import { useProstheticStore } from '@/hooks/use-prosthetic-store';
+import { useDeleteProsthetic } from '@/hooks/use-delete-prosthetic';
+
 import { patientProfileStyles } from '@/constants/patient-profile-styles';
 import { Colors } from '@/constants/Colors';
 import {
@@ -14,7 +14,6 @@ import {
   fingerPositionLabels,
   footTypeLabels,
   kneeTypeLabels,
-  MaterialType,
   materialTypeLabels,
   pelvicSocketLabels,
   ProstheticType,
@@ -37,35 +36,23 @@ const getDisplayValue = (
 ) => {
   if (value === undefined || value === null) return null;
 
-  if (
-    (value.toString().includes('Other') ||
-      value.toString().includes('Unknown')) &&
-    !otherValue
-  ) {
-    return null;
+  const stringValue = value.toString();
+  const isOtherOrUnknown =
+    stringValue.includes('Other') || stringValue.includes('Unknown');
+
+  if (!isOtherOrUnknown) {
+    return labelsMap[value] || null;
   }
 
-  return otherValue || labelsMap[value];
+  return otherValue || null;
 };
 
 export default function ProstheticCard({ prosthetic }: ProstheticCardProps) {
-  const queryClient = useQueryClient();
+  const { showProstheticDetails } = useProstheticStore();
 
-  const { mutate: deleteProsthetic, isPending } = useMutation({
-    mutationFn: async () => {
-      return await axiosClient.delete<Prosthetic>(
-        `prosthetics/${prosthetic.id}`
-      );
-    },
-    onError: () => {
-      return toast.error('Failed to delete this prosthetic');
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [`patient_${prosthetic.patientId}`],
-      });
-      return toast.success('Prosthetic deleted successfully');
-    },
+  const { handleDelete, isPending } = useDeleteProsthetic({
+    id: prosthetic.id,
+    patientId: prosthetic.patientId,
   });
 
   const renderTypeSpecificDetails = () => {
@@ -313,7 +300,11 @@ export default function ProstheticCard({ prosthetic }: ProstheticCardProps) {
   return (
     <ContextMenu.Root>
       <ContextMenu.Trigger disabled={isPending}>
-        <TouchableOpacity style={patientProfileStyles.card} activeOpacity={0.6}>
+        <TouchableOpacity
+          style={patientProfileStyles.card}
+          activeOpacity={0.6}
+          onPress={() => showProstheticDetails(prosthetic)}
+        >
           <View style={patientProfileStyles.cardHeader}>
             <MaterialIcons name='device-hub' size={20} color={Colors.primary} />
             <Text style={patientProfileStyles.cardTitle}>
@@ -361,7 +352,10 @@ export default function ProstheticCard({ prosthetic }: ProstheticCardProps) {
       </ContextMenu.Trigger>
       <ContextMenu.Content>
         <ContextMenu.Label />
-        <ContextMenu.Item key={`details_prosthetic_${prosthetic.id}`}>
+        <ContextMenu.Item
+          key={`details_prosthetic_${prosthetic.id}`}
+          onSelect={() => showProstheticDetails(prosthetic)}
+        >
           <ContextMenu.ItemTitle>Prosthetic Details</ContextMenu.ItemTitle>
           <ContextMenu.ItemIcon
             ios={{
@@ -381,23 +375,7 @@ export default function ProstheticCard({ prosthetic }: ProstheticCardProps) {
         </ContextMenu.Item>
         <ContextMenu.Item
           key={`delete_prosthetic_${prosthetic.id}`}
-          onSelect={() => {
-            Alert.alert(
-              'Delete Prosthetic',
-              'Are you sure you want to delete this prosthetic?',
-              [
-                {
-                  text: 'Cancel',
-                  style: 'cancel',
-                },
-                {
-                  text: 'Delete',
-                  style: 'destructive',
-                  onPress: () => deleteProsthetic(),
-                },
-              ]
-            );
-          }}
+          onSelect={handleDelete}
         >
           <ContextMenu.ItemTitle>Delete Prosthetic</ContextMenu.ItemTitle>
           <ContextMenu.ItemIcon

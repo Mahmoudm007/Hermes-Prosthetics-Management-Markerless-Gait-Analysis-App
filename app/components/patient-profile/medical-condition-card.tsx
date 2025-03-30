@@ -1,11 +1,11 @@
-import { Alert, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import * as ContextMenu from 'zeego/context-menu';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { format, formatDistanceToNow } from 'date-fns';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { toast } from 'sonner-native';
 
-import { axiosClient } from '@/lib/axios';
+import { useMedicalConditionStore } from '@/hooks/use-medical-condition-store';
+import { useDeleteMedicalCondition } from '@/hooks/use-delete-medical-condition';
+
 import { patientProfileStyles } from '@/constants/patient-profile-styles';
 import { Colors } from '@/constants/Colors';
 import {
@@ -21,29 +21,21 @@ interface MedicalConditionCardProps {
 export default function MedicalConditionCard({
   medicalCondition,
 }: MedicalConditionCardProps) {
-  const queryClient = useQueryClient();
+  const { showMedicalConditionDetails } = useMedicalConditionStore();
 
-  const { mutate: deleteMedicalCondition, isPending } = useMutation({
-    mutationFn: async () => {
-      return await axiosClient.delete<MedicalCondition>(
-        `medical-conditions/${medicalCondition.id}`
-      );
-    },
-    onError: () => {
-      return toast.error('Failed to delete this medical condition');
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [`patient_${medicalCondition.patientId}`],
-      });
-      return toast.success('Medical condition deleted successfully');
-    },
+  const { handleDelete, isPending } = useDeleteMedicalCondition({
+    id: medicalCondition.id,
+    patientId: medicalCondition.patientId,
   });
 
   return (
     <ContextMenu.Root>
       <ContextMenu.Trigger disabled={isPending}>
-        <TouchableOpacity style={patientProfileStyles.card} activeOpacity={0.6}>
+        <TouchableOpacity
+          style={patientProfileStyles.card}
+          activeOpacity={0.6}
+          // onPress={() => showMedicalConditionDetails(medicalCondition)}
+        >
           <View style={patientProfileStyles.cardHeader}>
             <FontAwesome5
               name='file-medical'
@@ -88,6 +80,7 @@ export default function MedicalConditionCard({
         <ContextMenu.Label />
         <ContextMenu.Item
           key={`details_medical_condition_${medicalCondition.id}`}
+          onSelect={() => showMedicalConditionDetails(medicalCondition)}
         >
           <ContextMenu.ItemTitle>
             Medical Condition Details
@@ -110,26 +103,10 @@ export default function MedicalConditionCard({
         </ContextMenu.Item>
         <ContextMenu.Item
           key={`delete_medical_condition_${medicalCondition.id}`}
-          onSelect={() => {
-            Alert.alert(
-              'Delete Medical Condition',
-              'Are you sure you want to delete this medical condition?',
-              [
-                {
-                  text: 'Cancel',
-                  style: 'cancel',
-                },
-                {
-                  text: 'Delete',
-                  style: 'destructive',
-                  onPress: () => deleteMedicalCondition(),
-                },
-              ]
-            );
-          }}
+          onSelect={handleDelete}
         >
           <ContextMenu.ItemTitle>
-            Medical Condition Details
+            Delete Medical Condition
           </ContextMenu.ItemTitle>
           <ContextMenu.ItemIcon
             ios={{

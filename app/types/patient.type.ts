@@ -28,9 +28,9 @@ export enum LimbDominance {
 }
 
 export const limbDominanceIcons: Record<LimbDominance, string> = {
-  [LimbDominance.Left]: 'hand-left',
-  [LimbDominance.Right]: 'hand-right',
-  [LimbDominance.Ambidextrous]: 'hands',
+  [LimbDominance.Left]: 'hand-point-left',
+  [LimbDominance.Right]: 'hand-point-right',
+  [LimbDominance.Ambidextrous]: 'hands-holding',
   [LimbDominance.Unknown]: 'question',
 };
 
