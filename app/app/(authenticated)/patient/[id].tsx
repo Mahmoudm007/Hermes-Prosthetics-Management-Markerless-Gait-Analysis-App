@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import ImageView from 'react-native-image-viewing';
+import { FlashList } from '@shopify/flash-list';
 import {
   Ionicons,
   MaterialCommunityIcons,
@@ -42,10 +43,19 @@ import { Colors } from '@/constants/Colors';
 import {
   limbDominanceIcons,
   type Patient,
+  type MedicalCondition,
+  type Injury,
+  type Prosthetic,
   Sex,
   sexIcons,
   sexLabels,
 } from '@/types';
+
+const EmptyListComponent = ({ message }: { message: string }) => (
+  <View style={patientProfileStyles.emptyListContainer}>
+    <Text style={patientProfileStyles.emptyListText}>{message}</Text>
+  </View>
+);
 
 export default function PatientProfile() {
   const { id, name } = useLocalSearchParams();
@@ -85,6 +95,18 @@ export default function PatientProfile() {
     hideProstheticDetails,
     reset: resetProstheticStore,
   } = useProstheticStore();
+
+  const renderMedicalCondition = ({ item }: { item: MedicalCondition }) => (
+    <MedicalConditionCard medicalCondition={item} />
+  );
+
+  const renderInjury = ({ item }: { item: Injury }) => (
+    <InjuryCard injury={item} />
+  );
+
+  const renderProsthetic = ({ item }: { item: Prosthetic }) => (
+    <ProstheticCard prosthetic={item} />
+  );
 
   useEffect(() => {
     if (id) {
@@ -321,13 +343,19 @@ export default function PatientProfile() {
             />
           }
         />
-        <View style={patientProfileStyles.cardsContainer}>
-          {patient.medicalConditions.map((medicalCondition) => (
-            <MedicalConditionCard
-              key={medicalCondition.id}
-              medicalCondition={medicalCondition}
-            />
-          ))}
+        <View style={patientProfileStyles.listContainer}>
+          <FlashList
+            data={patient.medicalConditions}
+            renderItem={renderMedicalCondition}
+            estimatedItemSize={150}
+            keyExtractor={(item) => item.id.toString()}
+            ListEmptyComponent={
+              <EmptyListComponent message='No medical conditions recorded' />
+            }
+            horizontal={false}
+            showsVerticalScrollIndicator={false}
+            scrollEnabled={false} // Disable scrolling within FlashList as we're in a ScrollView
+          />
         </View>
 
         {/* Separator */}
@@ -338,10 +366,19 @@ export default function PatientProfile() {
           title='Injuries'
           icon={<Fontisto name='bandage' size={24} color={Colors.secondary} />}
         />
-        <View style={patientProfileStyles.cardsContainer}>
-          {patient.injuries.map((injury) => (
-            <InjuryCard key={injury.id} injury={injury} />
-          ))}
+        <View style={patientProfileStyles.listContainer}>
+          <FlashList
+            data={patient.injuries}
+            renderItem={renderInjury}
+            estimatedItemSize={150}
+            keyExtractor={(item) => item.id.toString()}
+            ListEmptyComponent={
+              <EmptyListComponent message='No injuries recorded' />
+            }
+            horizontal={false}
+            showsVerticalScrollIndicator={false}
+            scrollEnabled={false} // Disable scrolling within FlashList as we're in a ScrollView
+          />
         </View>
 
         {/* Separator */}
@@ -359,16 +396,22 @@ export default function PatientProfile() {
           sex={patient.sex}
         />
 
-        <View
-          style={{
-            ...patientProfileStyles.cardsContainer,
-            padding: 0,
-            marginTop: patient.sex === Sex.Male ? -20 : -10,
-          }}
-        >
-          {patient.prosthetics.map((prosthetic) => (
-            <ProstheticCard key={prosthetic.id} prosthetic={prosthetic} />
-          ))}
+        <View style={patientProfileStyles.listContainer}>
+          <FlashList
+            data={patient.prosthetics}
+            renderItem={renderProsthetic}
+            estimatedItemSize={150}
+            keyExtractor={(item) => item.id.toString()}
+            ListEmptyComponent={
+              <EmptyListComponent message='No prosthetics recorded' />
+            }
+            horizontal={false}
+            showsVerticalScrollIndicator={false}
+            scrollEnabled={false} // Disable scrolling within FlashList as we're in a ScrollView
+            contentContainerStyle={{
+              paddingTop: patient.sex === Sex.Male ? 0 : 10,
+            }}
+          />
         </View>
       </ScrollView>
 

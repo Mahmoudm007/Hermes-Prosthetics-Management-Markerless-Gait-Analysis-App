@@ -57,6 +57,133 @@ const getDisplayValue = (
   return otherValue || labelsMap[value] || null;
 };
 
+const isRelevantProperty = (
+  property: string,
+  type: ProstheticType
+): boolean => {
+  const relevantProperties: Record<ProstheticType, string[]> = {
+    [ProstheticType.Transtibial]: [
+      'residualLimbLength',
+      'footType',
+      'suspensionSystem',
+      'alignment',
+      'socketFit',
+      'rangeOfMotionMin',
+      'rangeOfMotionMax',
+      'stiffness',
+      'shockAbsorptionEnergy',
+    ],
+    [ProstheticType.Transfemoral]: [
+      'residualLimbLength',
+      'kneeType',
+      'footType',
+      'suspensionSystem',
+      'controlSystem',
+      'alignment',
+      'socketFit',
+      'rangeOfMotionMin',
+      'rangeOfMotionMax',
+      'stiffness',
+      'shockAbsorptionEnergy',
+    ],
+    [ProstheticType.PartialFoot]: [
+      'footType',
+      'suspensionSystem',
+      'alignment',
+      'socketFit',
+      'rangeOfMotionMin',
+      'rangeOfMotionMax',
+      'stiffness',
+    ],
+    [ProstheticType.Syme]: [
+      'residualLimbLength',
+      'footType',
+      'suspensionSystem',
+      'alignment',
+      'socketFit',
+      'rangeOfMotionMin',
+      'rangeOfMotionMax',
+      'stiffness',
+      'shockAbsorptionEnergy',
+    ],
+    [ProstheticType.KneeDisarticulation]: [
+      'residualLimbLength',
+      'kneeType',
+      'footType',
+      'suspensionSystem',
+      'controlSystem',
+      'alignment',
+      'socketFit',
+      'rangeOfMotionMin',
+      'rangeOfMotionMax',
+      'stiffness',
+      'shockAbsorptionEnergy',
+    ],
+    [ProstheticType.HipDisarticulation]: [
+      'pelvicSocket',
+      'kneeType',
+      'footType',
+      'suspensionSystem',
+      'controlSystem',
+      'alignment',
+      'socketFit',
+      'rangeOfMotionMin',
+      'rangeOfMotionMax',
+      'stiffness',
+      'shockAbsorptionEnergy',
+    ],
+    [ProstheticType.Transhumeral]: [
+      'residualLimbLength',
+      'controlSystem',
+      'suspensionSystem',
+      'alignment',
+      'socketFit',
+      'rangeOfMotionMin',
+      'rangeOfMotionMax',
+      'stiffness',
+    ],
+    [ProstheticType.Transradial]: [
+      'residualLimbLength',
+      'controlSystem',
+      'suspensionSystem',
+      'alignment',
+      'socketFit',
+      'gripStrength',
+    ],
+    [ProstheticType.Hand]: [
+      'controlSystem',
+      'suspensionSystem',
+      'alignment',
+      'socketFit',
+      'gripStrength',
+    ],
+    [ProstheticType.ShoulderDisarticulation]: [
+      'controlSystem',
+      'suspensionSystem',
+      'alignment',
+      'socketFit',
+      'rangeOfMotionMin',
+      'rangeOfMotionMax',
+      'stiffness',
+    ],
+    [ProstheticType.Finger]: [
+      'residualLimbLength',
+      'fingerPosition',
+      'alignment',
+      'gripStrength',
+      'rangeOfMotionMin',
+      'rangeOfMotionMax',
+    ],
+    [ProstheticType.Toe]: ['residualLimbLength', 'toePosition', 'alignment'],
+    [ProstheticType.Other]: [], // All properties could be relevant for "Other"
+  };
+
+  // For "Other" type, consider all properties as relevant
+  if (type === ProstheticType.Other) return true;
+
+  return relevantProperties[type].includes(property);
+};
+
 export default function ProstheticDetailsSheet({
   prosthetic,
   isVisible,
@@ -123,134 +250,6 @@ export default function ProstheticDetailsSheet({
     return '';
   };
 
-  // Check if a property is relevant for the current prosthetic type
-  const isRelevantProperty = (
-    property: string,
-    type: ProstheticType
-  ): boolean => {
-    const relevantProperties: Record<ProstheticType, string[]> = {
-      [ProstheticType.Transtibial]: [
-        'residualLimbLength',
-        'footType',
-        'suspensionSystem',
-        'alignment',
-        'socketFit',
-        'rangeOfMotionMin',
-        'rangeOfMotionMax',
-        'stiffness',
-        'shockAbsorptionEnergy',
-      ],
-      [ProstheticType.Transfemoral]: [
-        'residualLimbLength',
-        'kneeType',
-        'footType',
-        'suspensionSystem',
-        'controlSystem',
-        'alignment',
-        'socketFit',
-        'rangeOfMotionMin',
-        'rangeOfMotionMax',
-        'stiffness',
-        'shockAbsorptionEnergy',
-      ],
-      [ProstheticType.PartialFoot]: [
-        'footType',
-        'suspensionSystem',
-        'alignment',
-        'socketFit',
-        'rangeOfMotionMin',
-        'rangeOfMotionMax',
-        'stiffness',
-      ],
-      [ProstheticType.Syme]: [
-        'residualLimbLength',
-        'footType',
-        'suspensionSystem',
-        'alignment',
-        'socketFit',
-        'rangeOfMotionMin',
-        'rangeOfMotionMax',
-        'stiffness',
-        'shockAbsorptionEnergy',
-      ],
-      [ProstheticType.KneeDisarticulation]: [
-        'residualLimbLength',
-        'kneeType',
-        'footType',
-        'suspensionSystem',
-        'controlSystem',
-        'alignment',
-        'socketFit',
-        'rangeOfMotionMin',
-        'rangeOfMotionMax',
-        'stiffness',
-        'shockAbsorptionEnergy',
-      ],
-      [ProstheticType.HipDisarticulation]: [
-        'pelvicSocket',
-        'kneeType',
-        'footType',
-        'suspensionSystem',
-        'controlSystem',
-        'alignment',
-        'socketFit',
-        'rangeOfMotionMin',
-        'rangeOfMotionMax',
-        'stiffness',
-        'shockAbsorptionEnergy',
-      ],
-      [ProstheticType.Transhumeral]: [
-        'residualLimbLength',
-        'controlSystem',
-        'suspensionSystem',
-        'alignment',
-        'socketFit',
-        'rangeOfMotionMin',
-        'rangeOfMotionMax',
-        'stiffness',
-      ],
-      [ProstheticType.Transradial]: [
-        'residualLimbLength',
-        'controlSystem',
-        'suspensionSystem',
-        'alignment',
-        'socketFit',
-        'gripStrength',
-      ],
-      [ProstheticType.Hand]: [
-        'controlSystem',
-        'suspensionSystem',
-        'alignment',
-        'socketFit',
-        'gripStrength',
-      ],
-      [ProstheticType.ShoulderDisarticulation]: [
-        'controlSystem',
-        'suspensionSystem',
-        'alignment',
-        'socketFit',
-        'rangeOfMotionMin',
-        'rangeOfMotionMax',
-        'stiffness',
-      ],
-      [ProstheticType.Finger]: [
-        'residualLimbLength',
-        'fingerPosition',
-        'alignment',
-        'gripStrength',
-        'rangeOfMotionMin',
-        'rangeOfMotionMax',
-      ],
-      [ProstheticType.Toe]: ['residualLimbLength', 'toePosition', 'alignment'],
-      [ProstheticType.Other]: [], // All properties could be relevant for "Other"
-    };
-
-    // For "Other" type, consider all properties as relevant
-    if (type === ProstheticType.Other) return true;
-
-    return relevantProperties[type].includes(property);
-  };
-
   const renderHeader = () => {
     if (!prosthetic) return null;
 
@@ -283,6 +282,30 @@ export default function ProstheticDetailsSheet({
       <View style={patientProfileStyles.sheetInfoSection}>
         <Text style={patientProfileStyles.sectionTitle}>Basic Details</Text>
 
+        <View style={patientProfileStyles.infoItem}>
+          <View style={patientProfileStyles.infoIcon}>
+            <FontAwesome5 name='power-off' size={24} color={Colors.primary} />
+          </View>
+          <View style={patientProfileStyles.infoContent}>
+            <Text style={patientProfileStyles.infoLabel}>Status</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <View
+                style={[
+                  patientProfileStyles.statusDot,
+                  {
+                    backgroundColor: prosthetic.isActive
+                      ? Colors.success
+                      : Colors.destructive,
+                  },
+                ]}
+              />
+              <Text style={patientProfileStyles.infoValue}>
+                {prosthetic.isActive ? 'Active' : 'Inactive'}
+              </Text>
+            </View>
+          </View>
+        </View>
+
         {(prosthetic.installationDate || prosthetic.installationYear) && (
           <InfoItem
             icon={
@@ -298,6 +321,28 @@ export default function ProstheticDetailsSheet({
             }`}
           />
         )}
+
+        {!prosthetic.isActive &&
+          (prosthetic.deactivationDate || prosthetic.deactivationYear) && (
+            <InfoItem
+              icon={
+                <FontAwesome5
+                  name='calendar-times'
+                  size={24}
+                  color={Colors.primary}
+                />
+              }
+              label='Deactivation Date'
+              value={
+                prosthetic.deactivationDate
+                  ? format(
+                      new Date(prosthetic.deactivationDate),
+                      'dd MMMM yyyy'
+                    )
+                  : prosthetic.deactivationYear?.toString() || 'Unknown'
+              }
+            />
+          )}
 
         <InfoItem
           icon={
@@ -1094,21 +1139,6 @@ export default function ProstheticDetailsSheet({
           <View style={patientProfileStyles.infoContent}>
             <Text style={patientProfileStyles.infoLabel}>Details</Text>
             <Text style={patientProfileStyles.sheetDetailsText}>
-              {prosthetic.details}
-              {prosthetic.details}
-              {prosthetic.details}
-              {prosthetic.details}
-              {prosthetic.details}
-              {prosthetic.details}
-              {prosthetic.details}
-              {prosthetic.details}
-              {prosthetic.details}
-              {prosthetic.details}
-              {prosthetic.details}
-              {prosthetic.details}
-              {prosthetic.details}
-              {prosthetic.details}
-              {prosthetic.details}
               {prosthetic.details}
             </Text>
           </View>

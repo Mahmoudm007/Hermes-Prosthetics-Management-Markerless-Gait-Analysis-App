@@ -45,11 +45,11 @@ export const alignmentLabels: Record<Alignment, string> = {
 };
 
 export enum SuspensionSystem {
-  Suction,
-  VacuumAssisted,
-  PinLock,
-  Straps,
-  Other,
+  Suction = 'Suction',
+  VacuumAssisted = 'VacuumAssisted',
+  PinLock = 'PinLock',
+  Straps = 'Straps',
+  Other = 'Other',
 }
 
 export const suspensionSystemLabels: Record<SuspensionSystem, string> = {
@@ -228,6 +228,9 @@ export type Prosthetic = {
   usageDuration: number | null;
   installationDate: string | null;
   installationYear: number | null;
+  isActive: boolean;
+  deactivationDate: string | null;
+  deactivationYear: number | null;
   type: ProstheticType;
   otherType: string | null;
   side: Side;

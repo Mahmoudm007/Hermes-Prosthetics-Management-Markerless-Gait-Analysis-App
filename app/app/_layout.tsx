@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { ActivityIndicator, View } from 'react-native';
 import { Stack, usePathname, useRouter, useSegments } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
 import { ClerkLoaded, ClerkProvider, useAuth } from '@clerk/clerk-expo';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -10,6 +10,8 @@ import { configureReanimatedLogger } from 'react-native-reanimated';
 
 import { tokenCache } from '@/lib/cache';
 import { Colors } from '@/constants/Colors';
+
+SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient();
 
@@ -34,6 +36,12 @@ function InitialLayout() {
   const pathName = usePathname();
 
   useEffect(() => {
+    if (isLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [isLoaded]);
+
+  useEffect(() => {
     if (!isLoaded) return;
 
     const inAuthGroup = segments[0] === '(authenticated)';
@@ -44,14 +52,6 @@ function InitialLayout() {
       router.replace('/');
     }
   }, [isLoaded, isSignedIn, pathName, segments]);
-
-  if (!isLoaded) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size='large' color={Colors.primary} />
-      </View>
-    );
-  }
 
   return (
     <Stack
@@ -74,8 +74,8 @@ export default function RootLayout() {
         <QueryClientProvider client={queryClient}>
           <ActionSheetProvider>
             <GestureHandlerRootView style={{ flex: 1 }}>
-              <Toaster />
               <InitialLayout />
+              <Toaster richColors />
             </GestureHandlerRootView>
           </ActionSheetProvider>
         </QueryClientProvider>
