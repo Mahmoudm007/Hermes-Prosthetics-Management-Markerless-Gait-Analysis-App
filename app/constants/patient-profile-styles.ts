@@ -103,6 +103,12 @@ export const patientProfileStyles = StyleSheet.create({
     color: Colors.dark,
     marginBottom: 3,
   },
+  statusDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginRight: 6,
+  },
   sheetBackground: {
     backgroundColor: 'white',
   },
@@ -182,5 +188,23 @@ export const patientProfileStyles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 16,
     marginLeft: 8,
+  },
+  listContainer: {
+    height: 'auto',
+    minHeight: 50,
+    marginHorizontal: 15,
+  },
+  emptyListContainer: {
+    padding: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  emptyListText: {
+    color: '#7f8c8d',
+    fontSize: 14,
+    fontWeight: '500',
   },
 });

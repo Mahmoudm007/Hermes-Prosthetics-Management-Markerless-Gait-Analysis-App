@@ -4,6 +4,7 @@ import { format, formatDistanceToNow } from 'date-fns';
 import { FontAwesome5 } from '@expo/vector-icons';
 
 import { useMedicalConditionStore } from '@/hooks/use-medical-condition-store';
+import { useMedicalConditionFormStore } from '@/hooks/use-medical-condition-form-store';
 import { useDeleteMedicalCondition } from '@/hooks/use-delete-medical-condition';
 
 import { patientProfileStyles } from '@/constants/patient-profile-styles';
@@ -22,6 +23,7 @@ export default function MedicalConditionCard({
   medicalCondition,
 }: MedicalConditionCardProps) {
   const { showMedicalConditionDetails } = useMedicalConditionStore();
+  const { showMedicalConditionForm } = useMedicalConditionFormStore();
 
   const { handleDelete, isPending } = useDeleteMedicalCondition({
     id: medicalCondition.id,
@@ -92,7 +94,10 @@ export default function MedicalConditionCard({
             }}
           />
         </ContextMenu.Item>
-        <ContextMenu.Item key={`edit_medical_condition_${medicalCondition.id}`}>
+        <ContextMenu.Item
+          key={`edit_medical_condition_${medicalCondition.id}`}
+          onSelect={() => showMedicalConditionForm(medicalCondition)}
+        >
           <ContextMenu.ItemTitle>Edit Medical Condition</ContextMenu.ItemTitle>
           <ContextMenu.ItemIcon
             ios={{

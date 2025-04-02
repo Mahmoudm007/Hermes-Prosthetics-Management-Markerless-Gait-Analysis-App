@@ -10,6 +10,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import InfoItem from './info-item';
 import DetailsSheetFooter from './details-sheet-footer';
 
+import { useMedicalConditionFormStore } from '@/hooks/use-medical-condition-form-store';
 import { useDeleteMedicalCondition } from '@/hooks/use-delete-medical-condition';
 import { patientProfileStyles } from '@/constants/patient-profile-styles';
 import { Colors } from '@/constants/Colors';
@@ -57,6 +58,8 @@ export default function MedicalConditionDetailsSheet({
     []
   );
 
+  const { showMedicalConditionForm } = useMedicalConditionFormStore();
+
   const { handleDelete, isPending } = useDeleteMedicalCondition({
     id: medicalCondition?.id,
     patientId: medicalCondition?.patientId,
@@ -65,7 +68,7 @@ export default function MedicalConditionDetailsSheet({
 
   const handleUpdate = () => {
     if (!medicalCondition) return;
-    console.log('Updating medical condition', medicalCondition.id);
+    showMedicalConditionForm(medicalCondition);
   };
 
   const formatDiagnosisDate = () => {

@@ -10,6 +10,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import InfoItem from './info-item';
 import DetailsSheetFooter from './details-sheet-footer';
 
+import { useInjuryFormStore } from '@/hooks/use-injury-form-store';
 import { useDeleteInjury } from '@/hooks/use-delete-injury';
 import { patientProfileStyles } from '@/constants/patient-profile-styles';
 import { Colors } from '@/constants/Colors';
@@ -53,6 +54,8 @@ export default function InjuryDetailsSheet({
     []
   );
 
+  const { showInjuryForm } = useInjuryFormStore();
+
   const { handleDelete, isPending } = useDeleteInjury({
     id: injury?.id,
     patientId: injury?.patientId,
@@ -61,7 +64,7 @@ export default function InjuryDetailsSheet({
 
   const handleUpdate = () => {
     if (!injury) return;
-    console.log('Updating injury', injury.id);
+    showInjuryForm(injury);
   };
 
   const formatInjuryDate = () => {

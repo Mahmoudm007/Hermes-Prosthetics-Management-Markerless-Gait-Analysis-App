@@ -4,6 +4,7 @@ import { format, formatDistanceToNow } from 'date-fns';
 import { FontAwesome5 } from '@expo/vector-icons';
 
 import { useInjuryStore } from '@/hooks/use-injury-store';
+import { useInjuryFormStore } from '@/hooks/use-injury-form-store';
 import { useDeleteInjury } from '@/hooks/use-delete-injury';
 
 import { patientProfileStyles } from '@/constants/patient-profile-styles';
@@ -16,6 +17,7 @@ interface InjuryCardProps {
 
 export default function InjuryCard({ injury }: InjuryCardProps) {
   const { showInjuryDetails } = useInjuryStore();
+  const { showInjuryForm } = useInjuryFormStore();
 
   const { handleDelete, isPending } = useDeleteInjury({
     id: injury.id,
@@ -85,7 +87,10 @@ export default function InjuryCard({ injury }: InjuryCardProps) {
             }}
           />
         </ContextMenu.Item>
-        <ContextMenu.Item key={`edit_inujury_${injury.id}`}>
+        <ContextMenu.Item
+          key={`edit_inujury_${injury.id}`}
+          onSelect={() => showInjuryForm(injury)}
+        >
           <ContextMenu.ItemTitle>Edit Prosthetic</ContextMenu.ItemTitle>
           <ContextMenu.ItemIcon
             ios={{

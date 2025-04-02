@@ -5,6 +5,7 @@ import { format, formatDistanceToNow } from 'date-fns';
 import { MaterialIcons } from '@expo/vector-icons';
 
 import { useProstheticStore } from '@/hooks/use-prosthetic-store';
+import { useProstheticFormStore } from '@/hooks/use-prosthetic-form-store';
 import { useDeleteProsthetic } from '@/hooks/use-delete-prosthetic';
 
 import { patientProfileStyles } from '@/constants/patient-profile-styles';
@@ -30,6 +31,7 @@ interface ProstheticCardProps {
   prosthetic: Prosthetic;
 }
 
+// Move helper function outside component to prevent recreation on each render
 const getDisplayValue = (
   value: any,
   otherValue: string | null,
@@ -50,12 +52,14 @@ const getDisplayValue = (
 
 export default function ProstheticCard({ prosthetic }: ProstheticCardProps) {
   const { showProstheticDetails } = useProstheticStore();
+  const { showProstheticForm } = useProstheticFormStore();
 
   const { handleDelete, isPending } = useDeleteProsthetic({
     id: prosthetic.id,
     patientId: prosthetic.patientId,
   });
 
+  // Memoize common display values that are used multiple times
   const materialDisplay = useMemo(
     () =>
       getDisplayValue(
@@ -101,6 +105,7 @@ export default function ProstheticCard({ prosthetic }: ProstheticCardProps) {
     [prosthetic.type, prosthetic.otherType]
   );
 
+  // Memoize formatted dates
   const installationDateFormatted = useMemo(() => {
     if (!prosthetic.installationDate && !prosthetic.installationYear)
       return null;
@@ -126,6 +131,7 @@ export default function ProstheticCard({ prosthetic }: ProstheticCardProps) {
       : prosthetic.deactivationYear;
   }, [prosthetic.deactivationDate, prosthetic.deactivationYear]);
 
+  // Memoize the title text
   const titleText = useMemo(() => {
     const modelPart =
       prosthetic.manufacturer || prosthetic.model
@@ -135,6 +141,7 @@ export default function ProstheticCard({ prosthetic }: ProstheticCardProps) {
     return `${modelPart}${modelPart ? ' - ' : ''}${prostheticTypeDisplay}`;
   }, [prosthetic.manufacturer, prosthetic.model, prostheticTypeDisplay]);
 
+  // Break down type-specific details into smaller memoized chunks based on prosthetic type
   const lowerLimbDetails = useMemo(() => {
     if (
       ![
@@ -378,6 +385,7 @@ export default function ProstheticCard({ prosthetic }: ProstheticCardProps) {
     return details;
   }, [prosthetic.type, controlSystemDisplay, prosthetic.gripStrength]);
 
+  // Memoize common details that apply to many prosthetic types
   const commonDetails = useMemo(() => {
     const details = [];
 
@@ -434,6 +442,7 @@ export default function ProstheticCard({ prosthetic }: ProstheticCardProps) {
     activityLevelDisplay,
   ]);
 
+  // Combine all the type-specific details
   const typeSpecificDetails = useMemo(() => {
     return [
       ...(lowerLimbDetails || []),
@@ -457,6 +466,15 @@ export default function ProstheticCard({ prosthetic }: ProstheticCardProps) {
     otherTypeDetails,
     commonDetails,
   ]);
+
+  // Memoize event handlers
+  const handleShowDetails = useCallback(() => {
+    showProstheticDetails(prosthetic);
+  }, [prosthetic, showProstheticDetails]);
+
+  const handleShowForm = useCallback(() => {
+    showProstheticForm(prosthetic);
+  }, [prosthetic, showProstheticForm]);
 
   return (
     <ContextMenu.Root>
@@ -518,7 +536,7 @@ export default function ProstheticCard({ prosthetic }: ProstheticCardProps) {
         <ContextMenu.Label />
         <ContextMenu.Item
           key={`details_prosthetic_${prosthetic.id}`}
-          onSelect={() => showProstheticDetails(prosthetic)}
+          onSelect={handleShowDetails}
         >
           <ContextMenu.ItemTitle>Prosthetic Details</ContextMenu.ItemTitle>
           <ContextMenu.ItemIcon
@@ -528,7 +546,10 @@ export default function ProstheticCard({ prosthetic }: ProstheticCardProps) {
             }}
           />
         </ContextMenu.Item>
-        <ContextMenu.Item key={`edit_prosthetic_${prosthetic.id}`}>
+        <ContextMenu.Item
+          key={`edit_prosthetic_${prosthetic.id}`}
+          onSelect={handleShowForm}
+        >
           <ContextMenu.ItemTitle>Edit Prosthetic</ContextMenu.ItemTitle>
           <ContextMenu.ItemIcon
             ios={{

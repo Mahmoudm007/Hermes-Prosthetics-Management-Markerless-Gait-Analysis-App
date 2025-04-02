@@ -32,10 +32,16 @@ import ProstheticsBodyDiagram from '@/components/patient-profile/prosthetics-bod
 import MedicalConditionDetailsSheet from '@/components/patient-profile/medical-condition-details-sheet';
 import InjuryDetailsSheet from '@/components/patient-profile/injury-details-sheet';
 import ProstheticDetailsSheet from '@/components/patient-profile/prosthetic-details-sheet';
+import MedicalConditionFormSheet from '@/components/forms/medical-condition-form-sheet';
+import InjuryFormSheet from '@/components/forms/injury-form-sheet';
+import ProstheticFormSheet from '@/components/forms/prosthetic-form-sheet';
 
 import { useMedicalConditionStore } from '@/hooks/use-medical-condition-store';
 import { useInjuryStore } from '@/hooks/use-injury-store';
 import { useProstheticStore } from '@/hooks/use-prosthetic-store';
+import { useMedicalConditionFormStore } from '@/hooks/use-medical-condition-form-store';
+import { useInjuryFormStore } from '@/hooks/use-injury-form-store';
+import { useProstheticFormStore } from '@/hooks/use-prosthetic-form-store';
 
 import { axiosClient } from '@/lib/axios';
 import { patientProfileStyles } from '@/constants/patient-profile-styles';
@@ -83,11 +89,27 @@ export default function PatientProfile() {
   } = useMedicalConditionStore();
 
   const {
+    selectedFormMedicalCondition,
+    isMedicalConditionFormVisible,
+    showMedicalConditionForm,
+    hideMedicalConditionForm,
+    resetMedicalConditionForm,
+  } = useMedicalConditionFormStore();
+
+  const {
     selectedInjury,
     isInjuryDetailsSheetVisible,
     hideInjuryDetails,
     reset: resetInjuryStore,
   } = useInjuryStore();
+
+  const {
+    selectedFormInjury,
+    isInjuryFormVisible,
+    showInjuryForm,
+    hideInjuryForm,
+    resetInjuryForm,
+  } = useInjuryFormStore();
 
   const {
     selectedProsthetic,
@@ -96,6 +118,15 @@ export default function PatientProfile() {
     reset: resetProstheticStore,
   } = useProstheticStore();
 
+  const {
+    selectedFormProsthetic,
+    isProstheticFormVisible,
+    showProstheticForm,
+    hideProstheticForm,
+    resetProstheticForm,
+  } = useProstheticFormStore();
+
+  // Render functions for FlashList items
   const renderMedicalCondition = ({ item }: { item: MedicalCondition }) => (
     <MedicalConditionCard medicalCondition={item} />
   );
@@ -111,8 +142,11 @@ export default function PatientProfile() {
   useEffect(() => {
     if (id) {
       resetMedicalConditionStore();
+      resetMedicalConditionForm();
       resetInjuryStore();
+      resetInjuryForm();
       resetProstheticStore();
+      resetProstheticForm();
       navigation.setOptions({
         headerRight: () => (
           <MoreButton
@@ -156,19 +190,19 @@ export default function PatientProfile() {
                     key: `new_medical_condition_${id}`,
                     title: 'Add Medical Condition',
                     icon: 'plus.circle',
-                    onSelect: () => console.log('Adding medical condition', id),
+                    onSelect: () => showMedicalConditionForm(null),
                   },
                   {
                     key: `new_injury_${id}`,
                     title: 'Add Injury',
                     icon: 'plus.circle',
-                    onSelect: () => console.log('Adding injury', id),
+                    onSelect: () => showInjuryForm(null),
                   },
                   {
                     key: `new_prosthetic_${id}`,
                     title: 'Add Prosthetic',
                     icon: 'plus.circle',
-                    onSelect: () => console.log('Adding prosthetic', id),
+                    onSelect: () => showProstheticForm(null),
                   },
                 ],
               },
@@ -421,16 +455,38 @@ export default function PatientProfile() {
         onClose={hideMedicalConditionDetails}
       />
 
+      <MedicalConditionFormSheet
+        medicalCondition={selectedFormMedicalCondition}
+        patientId={patient.id}
+        isVisible={isMedicalConditionFormVisible}
+        onClose={hideMedicalConditionForm}
+      />
+
       <InjuryDetailsSheet
         injury={selectedInjury}
         isVisible={isInjuryDetailsSheetVisible}
         onClose={hideInjuryDetails}
       />
 
+      <InjuryFormSheet
+        injury={selectedFormInjury}
+        patientId={patient.id}
+        isVisible={isInjuryFormVisible}
+        onClose={hideInjuryForm}
+      />
+
       <ProstheticDetailsSheet
         prosthetic={selectedProsthetic}
         isVisible={isProstheticDetailsSheetVisible}
         onClose={hideProstheticDetails}
+      />
+
+      <ProstheticFormSheet
+        prosthetic={selectedFormProsthetic}
+        patientId={patient.id}
+        isVisible={isProstheticFormVisible}
+        onClose={hideProstheticForm}
+        patientProsthetics={patient.prosthetics}
       />
     </SafeAreaView>
   );

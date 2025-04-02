@@ -10,6 +10,7 @@ import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import InfoItem from './info-item';
 import DetailsSheetFooter from './details-sheet-footer';
 
+import { useProstheticFormStore } from '@/hooks/use-prosthetic-form-store';
 import { useDeleteProsthetic } from '@/hooks/use-delete-prosthetic';
 import { patientProfileStyles } from '@/constants/patient-profile-styles';
 import { Colors } from '@/constants/Colors';
@@ -215,6 +216,8 @@ export default function ProstheticDetailsSheet({
     []
   );
 
+  const { showProstheticForm } = useProstheticFormStore();
+
   const { handleDelete, isPending } = useDeleteProsthetic({
     id: prosthetic?.id,
     patientId: prosthetic?.patientId,
@@ -223,7 +226,7 @@ export default function ProstheticDetailsSheet({
 
   const handleUpdate = () => {
     if (!prosthetic) return;
-    console.log('Updating prosthetic', prosthetic.id);
+    showProstheticForm(prosthetic);
   };
 
   const formatInstallationDate = () => {
