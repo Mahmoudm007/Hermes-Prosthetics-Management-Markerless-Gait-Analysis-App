@@ -65,6 +65,18 @@ class Prosthetic(SQLModel, table=True):
     usage_duration: Optional[int] = Field(
         default=None, ge=0, description="Total duration of use in months, if tracked."
     )
+    is_active: bool = Field(
+        default=True,
+        description="Indicates if the prosthetic is currently in use or has been retired.",
+    )
+    deactivation_date: Optional[date] = Field(
+        default=None,
+        description="Date when the prosthetic was deactivated, if applicable.",
+    )
+    deactivation_year: Optional[int] = Field(
+        default=None,
+        description="Year of deactivation if exact date is unknown. Mutually exclusive with deactivation_date.",
+    )
 
     # --- General Physical Properties ---
     type: ProstheticType = Field(
@@ -134,7 +146,7 @@ class Prosthetic(SQLModel, table=True):
         description="Custom suspension system if not in predefined types.",
     )
     socket_fit: Optional[SocketFit] = Field(
-        default=SocketFit.Unknown,
+        default=None,
         description="Quality of socket fit, applicable to types with a socket: Transtibial, Transfemoral, PartialFoot (if socketed), Syme, KneeDisarticulation, HipDisarticulation, Transhumeral, Transradial, Hand, ShoulderDisarticulation.",
     )
 
@@ -221,8 +233,8 @@ class Prosthetic(SQLModel, table=True):
         max_length=255,
         description="Custom activity level if not in predefined categories.",
     )
-    user_adaptation: UserAdaptation = Field(
-        default=UserAdaptation.Unknown,
+    user_adaptation: Optional[UserAdaptation] = Field(
+        default=None,
         description="Patient's adaptation level to the prosthetic.",
     )
 

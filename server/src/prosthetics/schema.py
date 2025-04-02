@@ -1,6 +1,6 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, date
 
 from src.db.model.enum import (
     FingerPosition,
@@ -42,7 +42,7 @@ class ProstheticBaseModel(BaseModel):
         example=24,
         description="Total duration of use in months, if tracked.",
     )
-    installation_date: Optional[datetime] = Field(
+    installation_date: Optional[date] = Field(
         default=None,
         example="2023-04-12",
         description="Date when the prosthetic was installed, if known.",
@@ -52,6 +52,18 @@ class ProstheticBaseModel(BaseModel):
         ge=1900,
         example=2023,
         description="Year of installation if exact date is unknown. Mutually exclusive with installation_date.",
+    )
+    is_active: bool = Field(
+        default=True,
+        description="Indicates if the prosthetic is currently in use or has been retired.",
+    )
+    deactivation_date: Optional[date] = Field(
+        default=None,
+        description="Date when the prosthetic was deactivated, if applicable.",
+    )
+    deactivation_year: Optional[int] = Field(
+        default=None,
+        description="Year of deactivation if exact date is unknown. Mutually exclusive with deactivation_date.",
     )
     type: ProstheticType = Field(
         ...,
@@ -167,13 +179,13 @@ class ProstheticBaseModel(BaseModel):
         example="Athletic-grade prosthetic",
         description="Custom activity level if not in predefined categories.",
     )
-    user_adaptation: UserAdaptation = Field(
-        default=UserAdaptation.Unknown,
+    user_adaptation: Optional[UserAdaptation] = Field(
+        default=None,
         example=UserAdaptation.Good,
-        description="Patient’s adaptation level to the prosthetic.",
+        description="Patient's adaptation level to the prosthetic.",
     )
     socket_fit: Optional[SocketFit] = Field(
-        default=SocketFit.Unknown,
+        default=None,
         example=SocketFit.Perfect,
         description="Quality of socket fit, applicable to types with a socket: Transtibial, Transfemoral, PartialFoot (if socketed), Syme, KneeDisarticulation, HipDisarticulation, Transhumeral, Transradial, Hand, ShoulderDisarticulation.",
     )
@@ -197,15 +209,15 @@ class ProstheticBaseModel(BaseModel):
     )
     range_of_motion_min: Optional[float] = Field(
         default=None,
-        ge=-90,
-        le=150,
+        ge=-180,
+        le=180,
         example=-20.0,
         description="Minimum angle of range of motion in degrees, applicable to: Transtibial, Transfemoral, PartialFoot, Syme, KneeDisarticulation, HipDisarticulation (foot: e.g., -20° plantarflexion); Transhumeral, ShoulderDisarticulation (elbow: e.g., 0° extension); Finger (finger: e.g., 0° extension).",
     )
     range_of_motion_max: Optional[float] = Field(
         default=None,
-        ge=-90,
-        le=150,
+        ge=-180,
+        le=180,
         example=15.0,
         description="Maximum angle of range of motion in degrees, applicable to: Transtibial, Transfemoral, PartialFoot, Syme, KneeDisarticulation, HipDisarticulation (foot: e.g., 15° dorsiflexion); Transhumeral, ShoulderDisarticulation (elbow: e.g., 135° flexion); Finger (finger: e.g., 90° flexion).",
     )

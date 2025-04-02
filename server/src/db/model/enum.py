@@ -217,7 +217,7 @@ class SuspensionSystem(str, Enum):
 
     Suction = "Suction"  # (Suction)
     VacuumAssisted = "VacuumAssisted"  # (Vacuum Assisted)
-    PinLock = "Pin Lock"  # (Pin Lock)
+    PinLock = "PinLock"  # (Pin Lock)
     Straps = "Straps"  # (Straps)
     Other = "Other"  # (Other)
 
