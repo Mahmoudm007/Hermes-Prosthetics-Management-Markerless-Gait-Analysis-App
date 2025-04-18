@@ -17,6 +17,11 @@ class Patient(SQLModel, table=True):
         primary_key=True,
         description="Unique identifier for the patient record.",
     )
+    image_url: Optional[str] = Field(
+        None,
+        max_length=255,
+        description="URL to the patient's profile image, if available.",
+    )
     first_name: str = Field(..., max_length=255, description="Patient's first name.")
     last_name: str = Field(..., max_length=255, description="Patient's last name.")
 

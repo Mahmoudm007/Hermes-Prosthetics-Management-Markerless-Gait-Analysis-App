@@ -21,6 +21,12 @@ from src.utils import partial_model, to_camel
 class PatientBaseModel(BaseModel):
     """Base schema with shared attributes for Patient."""
 
+    image_url: Optional[str] = Field(
+        default=None,
+        max_length=255,
+        example="https://example.com/images/patient123.jpg",
+        description="URL to the patient's profile image, if available.",
+    )
     first_name: str = Field(
         ..., max_length=255, example="John", description="Patient's first name."
     )

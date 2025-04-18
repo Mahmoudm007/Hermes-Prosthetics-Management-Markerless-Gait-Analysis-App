@@ -168,3 +168,31 @@ class PatientsService:
         await session.commit()
         await session.refresh(patient)
         return patient
+
+    async def delete_patient(self, id: int, session: AsyncSession) -> None:
+        patient = await self.get_patient_by_id(id, session)
+
+        medical_conditions_stmt = select(PatientMedicalCondition).where(
+            PatientMedicalCondition.patient_id == id
+        )
+        medical_conditions_result = await session.exec(medical_conditions_stmt)
+        medical_conditions = medical_conditions_result.all()
+        for condition in medical_conditions:
+            await session.delete(condition)
+
+        injuries_stmt = select(PatientInjury).where(PatientInjury.patient_id == id)
+        injuries_result = await session.exec(injuries_stmt)
+        injuries = injuries_result.all()
+        for injury in injuries:
+            await session.delete(injury)
+
+        prosthetics_stmt = select(Prosthetic).where(Prosthetic.patient_id == id)
+        prosthetics_result = await session.exec(prosthetics_stmt)
+        prosthetics = prosthetics_result.all()
+        for prosthetic in prosthetics:
+            await session.delete(prosthetic)
+
+        await session.delete(patient)
+        await session.commit()
+
+        return None

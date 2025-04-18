@@ -1,3 +1,4 @@
+import uvicorn
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
@@ -54,3 +55,6 @@ app.include_router(
 app.include_router(
     prosthetics_router, prefix=f"/api/{version}/prosthetics", tags=["Prosthetics"]
 )
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

@@ -72,3 +72,16 @@ async def update_patient(
     _: dict = Depends(access_token_bearer),
 ) -> PatientResponseModel:
     return await patients_service.update_patient(patient_id, patient_data, session)
+
+
+@patients_router.delete(
+    "/{patient_id}",
+    status_code=status.HTTP_200_OK,
+    response_model=None,
+)
+async def delete_medical_condition(
+    patient_id: int,
+    session: AsyncSession = Depends(get_session),
+    _: dict = Depends(access_token_bearer),
+) -> None:
+    return await patients_service.delete_patient(patient_id, session)
