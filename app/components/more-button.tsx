@@ -21,13 +21,21 @@ interface MenuGroup {
 
 interface MoreButtonProps {
   menuConfig?: (MenuItem | MenuGroup)[];
+  disabled?: boolean;
 }
 
-export function MoreButton({ menuConfig }: MoreButtonProps = {}) {
+export function MoreButton({
+  menuConfig,
+  disabled = false,
+}: MoreButtonProps = {}) {
   return (
     <DropdownMenu.Root>
-      <DropdownMenu.Trigger>
-        <TouchableOpacity style={styles.button} activeOpacity={0.6}>
+      <DropdownMenu.Trigger disabled={disabled}>
+        <TouchableOpacity
+          style={styles.button}
+          activeOpacity={0.6}
+          disabled={disabled}
+        >
           <Ionicons
             name='ellipsis-horizontal-outline'
             size={30}

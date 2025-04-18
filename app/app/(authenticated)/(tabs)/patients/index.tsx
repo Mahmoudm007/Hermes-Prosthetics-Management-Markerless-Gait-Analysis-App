@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,19 +9,34 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { AlphabetList, type IData } from 'react-native-section-alphabet-list';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 
 import PatientsListItem from '@/components/patients-list-item';
+import PatientFormSheet from '@/components/forms/patient-form-sheet';
 import { FloatingActionButton } from '@/components/floating-action-button';
 
 import { useSearchStore } from '@/lib/search-store';
+import { usePatientFormStore } from '@/hooks/use-patient-form-store';
+
 import { axiosClient } from '@/lib/axios';
 import { Colors } from '@/constants/Colors';
 import type { PaginatedResponse, PatientListItem } from '@/types';
 
 export default function PatientsPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { searchValue } = useSearchStore();
+
+  const {
+    isPatientFormVisible,
+    selectedFormPatientId,
+    hidePatientForm,
+    resetPatientForm,
+  } = usePatientFormStore();
+
+  useEffect(() => {
+    resetPatientForm();
+  }, []);
 
   const {
     data,
@@ -101,7 +117,22 @@ export default function PatientsPage() {
           ) : null
         }
       />
-      <FloatingActionButton />
+
+      <PatientFormSheet
+        isVisible={isPatientFormVisible}
+        onClose={() => hidePatientForm()}
+        patientId={selectedFormPatientId}
+        onSuccess={() => {
+          queryClient.invalidateQueries({
+            queryKey: ['patients_'],
+          });
+          hidePatientForm();
+        }}
+      />
+
+      {!isPatientFormVisible && (
+        <FloatingActionButton onPress={() => router.push('/patient/new')} />
+      )}
     </SafeAreaView>
   );
 }

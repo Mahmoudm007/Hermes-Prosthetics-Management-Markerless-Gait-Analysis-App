@@ -11,6 +11,7 @@ import { useActionSheet } from '@expo/react-native-action-sheet';
 
 import { SwipeableRow, SwipeAction } from './swipeable-row';
 
+import { usePatientFormStore } from '@/hooks/use-patient-form-store';
 import { Colors } from '@/constants/Colors';
 import type { PatientListItem } from '@/types';
 
@@ -21,6 +22,7 @@ interface PatientsListItemProps {
 export default function PatientsListItem({ patient }: PatientsListItemProps) {
   const router = useRouter();
   const { showActionSheetWithOptions } = useActionSheet();
+  const { showPatientForm } = usePatientFormStore();
 
   const onViewProfile = () => {
     router.push({
@@ -30,10 +32,6 @@ export default function PatientsListItem({ patient }: PatientsListItemProps) {
         name: `${patient.firstName} ${patient.lastName}`,
       },
     });
-  };
-
-  const onUpdate = () => {
-    console.log('Update Patient Details pressed');
   };
 
   const onDelete = () => {
@@ -51,6 +49,10 @@ export default function PatientsListItem({ patient }: PatientsListItemProps) {
         },
       ]
     );
+  };
+
+  const onUpdate = () => {
+    showPatientForm(patient.id);
   };
 
   const swipeActions: SwipeAction[] = [
@@ -94,7 +96,7 @@ export default function PatientsListItem({ patient }: PatientsListItemProps) {
           }
         );
       },
-      // platform: 'ios',
+      platform: 'ios',
     },
     {
       text: 'Update',
@@ -121,7 +123,11 @@ export default function PatientsListItem({ patient }: PatientsListItemProps) {
       >
         <View style={styles.listItemContainer}>
           <Image
-            source={{ uri: 'https://i.pravatar.cc/205' }}
+            source={
+              patient.imageUrl
+                ? { uri: patient.imageUrl }
+                : require('@/assets/images/user-placeholder.png')
+            }
             style={styles.listItemImage}
           />
           <View>

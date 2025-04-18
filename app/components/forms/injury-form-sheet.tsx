@@ -13,7 +13,7 @@ import { toast } from 'sonner-native';
 
 import FormField from '@/components/ui/form/form-field';
 import SelectOption from '@/components/ui/form/select-option';
-import DateYearSelector from '@/components/ui/form/date-year-selector';
+import DateNumberSelector from '../ui/form/date-number-selector';
 import FormInput from '@/components/ui/form/form-input';
 import ToggleSwitch from '@/components/ui/form/toggle-switch';
 import FormSheetFooter from './form-sheet-footer';
@@ -266,14 +266,17 @@ export default function InjuryFormSheet({
         />
 
         {/* Injury Date/Year Selection */}
-        <DateYearSelector
+        <DateNumberSelector
           date={injuryDate || null}
-          year={injuryYear || null}
+          number={injuryYear || null}
           onDateChange={(date) => setValue('injuryDate', date)}
-          onYearChange={(year) => setValue('injuryYear', year)}
+          onNumberChange={(year) => setValue('injuryYear', year)}
           label='When did the injury occur?'
           hint='Select either a specific date or just the year'
           error={errors.injuryDate?.message || errors.injuryYear?.message}
+          numberButtonLabel='Select Year'
+          minNumber={1900}
+          maxNumber={currentYear}
         />
 
         {/* Side Selection */}

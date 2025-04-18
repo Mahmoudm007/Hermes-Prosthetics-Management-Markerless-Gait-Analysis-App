@@ -53,6 +53,7 @@ type PatientBase = {
   height: number;
   weight: number;
   limbDominance: LimbDominance;
+  imageUrl?: string;
 };
 
 export type PatientListItem = PatientBase & {

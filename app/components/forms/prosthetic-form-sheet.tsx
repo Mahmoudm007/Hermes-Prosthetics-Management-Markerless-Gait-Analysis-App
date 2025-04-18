@@ -14,7 +14,7 @@ import { toast } from 'sonner-native';
 import FormField from '@/components/ui/form/form-field';
 import SelectOption from '@/components/ui/form/select-option';
 import SelectOptionsWithOther from '@/components/ui/form/select-options-with-other';
-import DateYearSelector from '@/components/ui/form/date-year-selector';
+import DateNumberSelector from '../ui/form/date-number-selector';
 import FormInput from '@/components/ui/form/form-input';
 import NumberInput from '@/components/ui/form/number-input';
 import ToggleSwitch from '@/components/ui/form/toggle-switch';
@@ -1714,16 +1714,19 @@ export default function ProstheticFormSheet({
       />
       {/* Deactivation Date/Year - only show if isActive is false */}
       {!isActiveWatch && (
-        <DateYearSelector
+        <DateNumberSelector
           date={deactivationDate || null}
-          year={deactivationYear || null}
+          number={deactivationYear || null}
           onDateChange={(date) => setValue('deactivationDate', date)}
-          onYearChange={(year) => setValue('deactivationYear', year)}
+          onNumberChange={(number) => setValue('deactivationYear', number)}
           label='Deactivation Date'
           hint='When was the prosthetic deactivated?'
           error={
             errors.deactivationDate?.message || errors.deactivationYear?.message
           }
+          numberButtonLabel='Select Year'
+          minNumber={1900}
+          maxNumber={currentYear}
         />
       )}
 
@@ -1754,16 +1757,19 @@ export default function ProstheticFormSheet({
       />
 
       {/* Installation Date/Year */}
-      <DateYearSelector
+      <DateNumberSelector
         date={installationDate || null}
-        year={installationYear || null}
+        number={installationYear || null}
         onDateChange={(date) => setValue('installationDate', date)}
-        onYearChange={(year) => setValue('installationYear', year)}
+        onNumberChange={(number) => setValue('installationYear', number)}
         label='Installation Date'
         hint='When was the prosthetic installed?'
         error={
           errors.installationDate?.message || errors.installationYear?.message
         }
+        numberButtonLabel='Select Year'
+        minNumber={1900}
+        maxNumber={currentYear}
       />
 
       {/* Manufacturer */}

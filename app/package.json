@@ -27,6 +27,7 @@
     "@react-native-vector-icons/material-design-icons": "^7.4.47",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
+    "@shopify/flash-list": "1.7.3",
     "@tanstack/react-query": "^5.69.0",
     "add": "^2.0.6",
     "axios": "^1.8.4",
@@ -38,6 +39,7 @@
     "expo-dev-client": "~5.0.14",
     "expo-font": "~13.0.4",
     "expo-haptics": "~14.0.1",
+    "expo-image-picker": "~16.0.6",
     "expo-linking": "~7.0.5",
     "expo-router": "~4.0.18",
     "expo-secure-store": "^14.0.1",
@@ -70,8 +72,7 @@
     "use-debounce": "^10.0.4",
     "zeego": "^3.0.6",
     "zod": "^3.24.2",
-    "zustand": "^5.0.3",
-    "@shopify/flash-list": "1.7.3"
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

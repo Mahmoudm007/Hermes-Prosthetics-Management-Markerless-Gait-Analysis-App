@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import ImageView from 'react-native-image-viewing';
 import { FlashList } from '@shopify/flash-list';
 import {
@@ -29,6 +29,8 @@ import MedicalConditionCard from '@/components/patient-profile/medical-condition
 import InjuryCard from '@/components/patient-profile/injury-card';
 import ProstheticCard from '@/components/patient-profile/prosthetic-card';
 import ProstheticsBodyDiagram from '@/components/patient-profile/prosthetics-body-diagram';
+
+import PatientFormSheet from '@/components/forms/patient-form-sheet';
 import MedicalConditionDetailsSheet from '@/components/patient-profile/medical-condition-details-sheet';
 import InjuryDetailsSheet from '@/components/patient-profile/injury-details-sheet';
 import ProstheticDetailsSheet from '@/components/patient-profile/prosthetic-details-sheet';
@@ -66,6 +68,7 @@ const EmptyListComponent = ({ message }: { message: string }) => (
 export default function PatientProfile() {
   const { id, name } = useLocalSearchParams();
   const [isImageViewVisible, setIsImageViewVisible] = useState(false);
+  const [isPatientFormVisible, setIsPatientFormVisible] = useState(false);
   const navigation = useNavigation();
 
   const {
@@ -126,7 +129,6 @@ export default function PatientProfile() {
     resetProstheticForm,
   } = useProstheticFormStore();
 
-  // Render functions for FlashList items
   const renderMedicalCondition = ({ item }: { item: MedicalCondition }) => (
     <MedicalConditionCard medicalCondition={item} />
   );
@@ -158,7 +160,7 @@ export default function PatientProfile() {
                     key: `edit_${id}`,
                     title: 'Update Details',
                     icon: 'info.circle',
-                    onSelect: () => console.log('Updating patient', id),
+                    onSelect: () => setIsPatientFormVisible(true),
                   },
                   {
                     key: `delete_${id}`,
@@ -207,6 +209,7 @@ export default function PatientProfile() {
                 ],
               },
             ]}
+            disabled={isLoading}
           />
         ),
       });
@@ -244,9 +247,14 @@ export default function PatientProfile() {
           <TouchableOpacity
             activeOpacity={0.6}
             onPress={() => setIsImageViewVisible(true)}
+            disabled={!patient.imageUrl}
           >
             <Image
-              source={{ uri: 'https://i.pravatar.cc/205' }}
+              source={
+                patient.imageUrl
+                  ? { uri: patient.imageUrl }
+                  : require('@/assets/images/user-placeholder.png')
+              }
               style={patientProfileStyles.avatar}
             />
           </TouchableOpacity>
@@ -255,7 +263,7 @@ export default function PatientProfile() {
           </Text>
 
           <ImageView
-            images={[{ uri: 'https://i.pravatar.cc/205' }]}
+            images={[{ uri: patient.imageUrl }]}
             imageIndex={0}
             visible={isImageViewVisible}
             onRequestClose={() => setIsImageViewVisible(false)}
@@ -388,7 +396,7 @@ export default function PatientProfile() {
             }
             horizontal={false}
             showsVerticalScrollIndicator={false}
-            scrollEnabled={false} // Disable scrolling within FlashList as we're in a ScrollView
+            scrollEnabled={false}
           />
         </View>
 
@@ -411,7 +419,7 @@ export default function PatientProfile() {
             }
             horizontal={false}
             showsVerticalScrollIndicator={false}
-            scrollEnabled={false} // Disable scrolling within FlashList as we're in a ScrollView
+            scrollEnabled={false}
           />
         </View>
 
@@ -441,13 +449,20 @@ export default function PatientProfile() {
             }
             horizontal={false}
             showsVerticalScrollIndicator={false}
-            scrollEnabled={false} // Disable scrolling within FlashList as we're in a ScrollView
+            scrollEnabled={false}
             contentContainerStyle={{
               paddingTop: patient.sex === Sex.Male ? 0 : 10,
             }}
           />
         </View>
       </ScrollView>
+
+      <PatientFormSheet
+        isVisible={isPatientFormVisible}
+        onClose={() => setIsPatientFormVisible(false)}
+        patientId={+id}
+        onSuccess={() => setIsPatientFormVisible(false)}
+      />
 
       <MedicalConditionDetailsSheet
         medicalCondition={selectedMedicalCondition}

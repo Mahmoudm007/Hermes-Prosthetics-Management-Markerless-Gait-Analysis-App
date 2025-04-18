@@ -20,6 +20,7 @@ export default function AuthenticatedLayout() {
       <Stack.Screen
         name='patient/new'
         options={{
+          headerTitle: 'New Patient',
           presentation: 'modal',
         }}
       />
