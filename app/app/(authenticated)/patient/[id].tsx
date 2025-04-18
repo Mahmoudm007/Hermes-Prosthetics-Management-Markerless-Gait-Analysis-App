@@ -38,6 +38,7 @@ import MedicalConditionFormSheet from '@/components/forms/medical-condition-form
 import InjuryFormSheet from '@/components/forms/injury-form-sheet';
 import ProstheticFormSheet from '@/components/forms/prosthetic-form-sheet';
 
+import { useDeletePatient } from '@/hooks/use-delete-patient';
 import { useMedicalConditionStore } from '@/hooks/use-medical-condition-store';
 import { useInjuryStore } from '@/hooks/use-injury-store';
 import { useProstheticStore } from '@/hooks/use-prosthetic-store';
@@ -70,6 +71,7 @@ export default function PatientProfile() {
   const [isImageViewVisible, setIsImageViewVisible] = useState(false);
   const [isPatientFormVisible, setIsPatientFormVisible] = useState(false);
   const navigation = useNavigation();
+  const queryClient = useQueryClient();
 
   const {
     data: patient,
@@ -81,6 +83,14 @@ export default function PatientProfile() {
     queryFn: async () => {
       const data = await axiosClient.get<Patient>(`patients/${id}`);
       return data.data;
+    },
+  });
+
+  const { handleDelete, isPending: isDeleting } = useDeletePatient({
+    id: +id,
+    callbackFn: () => {
+      navigation.goBack();
+      queryClient.invalidateQueries({ queryKey: ['patients_'] });
     },
   });
 
@@ -178,7 +188,7 @@ export default function PatientProfile() {
                           },
                           {
                             text: 'Delete',
-                            onPress: () => console.log('Deleting patient', id),
+                            onPress: handleDelete,
                           },
                         ]
                       ),
@@ -209,7 +219,7 @@ export default function PatientProfile() {
                 ],
               },
             ]}
-            disabled={isLoading}
+            disabled={isLoading || isDeleting}
           />
         ),
       });

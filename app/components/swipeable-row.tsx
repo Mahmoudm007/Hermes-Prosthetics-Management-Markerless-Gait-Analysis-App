@@ -18,6 +18,7 @@ export interface SwipeAction {
   icon: keyof typeof Ionicons.glyphMap;
   onPress: () => void;
   platform?: 'ios' | 'android' | 'web';
+  disabled?: boolean;
 }
 
 interface SwipeableRowProps {
@@ -58,6 +59,7 @@ export function SwipeableRow({
       >
         <Pressable
           style={[styles.actionContainer, { backgroundColor: action.color }]}
+          disabled={action.disabled}
           onPress={pressHandler}
         >
           <Ionicons

@@ -1,17 +1,13 @@
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useActionSheet } from '@expo/react-native-action-sheet';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { SwipeableRow, SwipeAction } from './swipeable-row';
 
 import { usePatientFormStore } from '@/hooks/use-patient-form-store';
+import { useDeletePatient } from '@/hooks/use-delete-patient';
+
 import { Colors } from '@/constants/Colors';
 import type { PatientListItem } from '@/types';
 
@@ -21,6 +17,7 @@ interface PatientsListItemProps {
 
 export default function PatientsListItem({ patient }: PatientsListItemProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { showActionSheetWithOptions } = useActionSheet();
   const { showPatientForm } = usePatientFormStore();
 
@@ -34,22 +31,12 @@ export default function PatientsListItem({ patient }: PatientsListItemProps) {
     });
   };
 
-  const onDelete = () => {
-    Alert.alert(
-      `Delete ${patient.firstName} ${patient.lastName} Record`,
-      `Are you sure you want to delete ${patient.firstName} ${patient.lastName} record? This action cannot be undone.`,
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Delete',
-          onPress: () => console.log('Deleting patient', patient.id),
-        },
-      ]
-    );
-  };
+  const { handleDelete, isPending: isDeleting } = useDeletePatient({
+    id: patient.id,
+    callbackFn: () => {
+      queryClient.invalidateQueries({ queryKey: ['patients_'] });
+    },
+  });
 
   const onUpdate = () => {
     showPatientForm(patient.id);
@@ -88,7 +75,7 @@ export default function PatientsListItem({ patient }: PatientsListItemProps) {
                 break;
 
               case destructiveButtonIndex:
-                onDelete();
+                handleDelete();
                 break;
 
               case cancelButtonIndex:
@@ -97,6 +84,7 @@ export default function PatientsListItem({ patient }: PatientsListItemProps) {
         );
       },
       platform: 'ios',
+      disabled: isDeleting,
     },
     {
       text: 'Update',
@@ -104,13 +92,15 @@ export default function PatientsListItem({ patient }: PatientsListItemProps) {
       icon: 'pencil',
       platform: 'android',
       onPress: onUpdate,
+      disabled: isDeleting,
     },
     {
       text: 'Delete',
       color: Colors.tertiary,
       icon: 'trash',
       platform: 'android',
-      onPress: onDelete,
+      onPress: handleDelete,
+      disabled: isDeleting,
     },
   ];
 
@@ -120,6 +110,7 @@ export default function PatientsListItem({ patient }: PatientsListItemProps) {
         style={styles.touchableOpacity}
         activeOpacity={0.6}
         onPress={onViewProfile}
+        disabled={isDeleting}
       >
         <View style={styles.listItemContainer}>
           <Image
