@@ -45,6 +45,13 @@ import {
   UserAdaptation,
   userAdaptationLabels,
 } from './prosthetic.type';
+import {
+  AnalysisStatus,
+  analysisStatusColors,
+  analysisStatusLabels,
+  type GaitSession,
+  type GaitSessionListItem,
+} from './session.type';
 
 export type PaginatedResponse<T> = {
   items: T[];
@@ -98,4 +105,9 @@ export {
   toePositionLabels,
   UserAdaptation,
   userAdaptationLabels,
+  GaitSession,
+  GaitSessionListItem,
+  AnalysisStatus,
+  analysisStatusLabels,
+  analysisStatusColors,
 };

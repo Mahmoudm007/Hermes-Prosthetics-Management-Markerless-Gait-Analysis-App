@@ -152,6 +152,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 80,
     marginTop: 10,
+    overflow: 'hidden',
   },
   listItemContainer: {
     flex: 1,

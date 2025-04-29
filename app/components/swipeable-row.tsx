@@ -119,6 +119,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: 96,
+    height: '100%',
   },
   actionText: {
     color: 'white',

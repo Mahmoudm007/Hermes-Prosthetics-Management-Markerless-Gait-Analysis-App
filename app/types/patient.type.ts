@@ -1,6 +1,7 @@
 import type { MedicalCondition } from './medical-condition.type';
 import type { Injury } from './injury.type';
 import type { Prosthetic } from './prosthetic.type';
+import type { GaitSessionListItem } from './session.type';
 
 export enum Sex {
   Male = 'Male',
@@ -66,4 +67,5 @@ export type Patient = PatientListItem & {
   medicalConditions: MedicalCondition[];
   injuries: Injury[];
   prosthetics: Prosthetic[];
+  gaitSessions: GaitSessionListItem[];
 };
