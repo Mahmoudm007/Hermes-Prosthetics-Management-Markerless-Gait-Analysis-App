@@ -33,6 +33,22 @@ export default function AuthenticatedLayout() {
           headerTitleStyle: { color: '#000' },
         }}
       />
+      <Stack.Screen
+        name='session/new'
+        options={{
+          headerTitle: 'New Gait Session',
+          presentation: 'modal',
+        }}
+      />
+      <Stack.Screen
+        name='session/[id]'
+        options={{
+          title: 'Gait Session',
+          presentation: 'modal',
+          headerTintColor: Colors.primary,
+          headerTitleStyle: { color: '#000' },
+        }}
+      />
     </Stack>
   );
 }
