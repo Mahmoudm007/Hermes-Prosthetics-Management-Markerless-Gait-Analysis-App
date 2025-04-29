@@ -8,6 +8,7 @@ from src.patients.routes import patients_router
 from src.injuries.routes import injuries_router
 from src.medical_conditions.routes import medical_conditions_router
 from src.prosthetics.routes import prosthetics_router
+from src.gait_sessions.routes import gait_sessions_router
 
 version = "v1"
 
@@ -54,6 +55,9 @@ app.include_router(
 )
 app.include_router(
     prosthetics_router, prefix=f"/api/{version}/prosthetics", tags=["Prosthetics"]
+)
+app.include_router(
+    gait_sessions_router, prefix=f"/api/{version}/gait-sessions", tags=["Gait Sessions"]
 )
 
 if __name__ == "__main__":

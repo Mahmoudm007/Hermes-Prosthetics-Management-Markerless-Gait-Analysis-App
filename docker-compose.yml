@@ -1,0 +1,55 @@
+version: "3.8"
+
+services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: hermes_server
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./server:/app
+    env_file:
+      - ./server/.env
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/1
+    depends_on:
+      - redis
+
+  redis:
+    image: "redis:alpine"
+    container_name: hermes_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  celery:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: hermes_celery
+    command: celery -A src.gait_sessions.celery_jobs worker --loglevel=info --concurrency=1
+    depends_on:
+      - redis
+    volumes:
+      - ./server:/app
+    env_file:
+      - .env
+
+  flower:
+    image: mher/flower
+    container_name: hermes_flower
+    ports:
+      - "5555:5555"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - celery
+
+
+volumes:
+  redis_data:
