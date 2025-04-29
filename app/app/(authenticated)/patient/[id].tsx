@@ -58,7 +58,10 @@ import {
   Sex,
   sexIcons,
   sexLabels,
+  GaitSessionListItem,
 } from '@/types';
+import GaitSessionFormSheet from '@/components/forms/gait-session-form-sheet';
+import GaitSessionCard from '@/components/patient-profile/gait-session-card';
 
 const EmptyListComponent = ({ message }: { message: string }) => (
   <View style={patientProfileStyles.emptyListContainer}>
@@ -70,6 +73,9 @@ export default function PatientProfile() {
   const { id, name } = useLocalSearchParams();
   const [isImageViewVisible, setIsImageViewVisible] = useState(false);
   const [isPatientFormVisible, setIsPatientFormVisible] = useState(false);
+  const [isGaitSessionFormVisible, setIsGaitSessionFormVisible] =
+    useState(false);
+
   const navigation = useNavigation();
   const queryClient = useQueryClient();
 
@@ -151,6 +157,10 @@ export default function PatientProfile() {
     <ProstheticCard prosthetic={item} />
   );
 
+  const renderGaitSession = ({ item }: { item: GaitSessionListItem }) => (
+    <GaitSessionCard session={item} />
+  );
+
   useEffect(() => {
     if (id) {
       resetMedicalConditionStore();
@@ -215,6 +225,12 @@ export default function PatientProfile() {
                     title: 'Add Prosthetic',
                     icon: 'plus.circle',
                     onSelect: () => showProstheticForm(null),
+                  },
+                  {
+                    key: `new_gait_session_${id}`,
+                    title: 'Add Gait Session',
+                    icon: 'plus.circle',
+                    onSelect: () => setIsGaitSessionFormVisible(true),
                   },
                 ],
               },
@@ -465,6 +481,28 @@ export default function PatientProfile() {
             }}
           />
         </View>
+
+        {/* Gait Sessions Section */}
+        <SectionHeader
+          title='Gait Sessions'
+          icon={
+            <FontAwesome5 name='walking' size={24} color={Colors.primary} />
+          }
+        />
+        <View style={patientProfileStyles.listContainer}>
+          <FlashList
+            data={patient.gaitSessions}
+            renderItem={renderGaitSession}
+            estimatedItemSize={150}
+            keyExtractor={(item) => item.id.toString()}
+            ListEmptyComponent={
+              <EmptyListComponent message='No gait sessions recorded' />
+            }
+            horizontal={false}
+            showsVerticalScrollIndicator={false}
+            scrollEnabled={false}
+          />
+        </View>
       </ScrollView>
 
       <PatientFormSheet
@@ -512,6 +550,18 @@ export default function PatientProfile() {
         isVisible={isProstheticFormVisible}
         onClose={hideProstheticForm}
         patientProsthetics={patient.prosthetics}
+      />
+
+      <GaitSessionFormSheet
+        isVisible={isGaitSessionFormVisible}
+        onClose={() => setIsGaitSessionFormVisible(false)}
+        patientId={patient.id}
+        onSuccess={() => {
+          queryClient.invalidateQueries({
+            queryKey: [`patient_${id}`],
+          });
+          setIsGaitSessionFormVisible(false);
+        }}
       />
     </SafeAreaView>
   );
