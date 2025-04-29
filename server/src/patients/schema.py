@@ -15,6 +15,7 @@ from src.prosthetics.schema import (
     ProstheticResponseModel,
     ProstheticCreateModel,
 )
+from src.gait_sessions.schema import GaitSessionListResponseModel
 from src.utils import partial_model, to_camel
 
 
@@ -142,6 +143,10 @@ class PatientResponseModel(PatientListResponseModel):
     )
     prosthetics: List[ProstheticResponseModel] = Field(
         ..., description="List of prosthetics associated with the patient."
+    )
+    gait_sessions: List[GaitSessionListResponseModel] = Field(
+        ...,
+        description="List of gait sessions associated with the patient.",
     )
 
     class Config:

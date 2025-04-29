@@ -1,6 +1,16 @@
 from enum import Enum
 
 
+class AnalysisStatus(str, Enum):
+    """Status of the gait analysis."""
+
+    Initial = "Initial"
+    Pending = "Pending"
+    InProgress = "InProgress"
+    Completed = "Completed"
+    Error = "Error"
+
+
 class Sex(str, Enum):
     """Biological sex of the patient."""
 

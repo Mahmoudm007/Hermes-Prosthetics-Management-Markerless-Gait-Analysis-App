@@ -68,6 +68,10 @@ class Patient(SQLModel, table=True):
         back_populates="patient",
         sa_relationship_kwargs={"lazy": "selectin"},
     )
+    gait_sessions: List["GaitSession"] = Relationship(
+        back_populates="patient",
+        sa_relationship_kwargs={"lazy": "selectin"},
+    )
 
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),

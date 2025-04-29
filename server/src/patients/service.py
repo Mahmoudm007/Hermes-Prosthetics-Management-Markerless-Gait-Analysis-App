@@ -34,6 +34,7 @@ class PatientsService:
                 noload(Patient.medical_conditions),
                 noload(Patient.injuries),
                 noload(Patient.prosthetics),
+                noload(Patient.gait_sessions),
             )
             .order_by(Patient.first_name, Patient.last_name)
         )
